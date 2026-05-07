@@ -40,6 +40,7 @@ export interface DownloadTask {
   type: 'hd' | 'nowm' | 'mp3';
   fileName: string;
   timestamp: number;
+  savedUri?: string;
 }
 
 export interface AppState {

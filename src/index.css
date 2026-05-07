@@ -82,3 +82,16 @@ body.light {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+/* Hide AppsGeyser / Banner Ads */
+[id*="appsgeyser"], [class*="appsgeyser"],
+.appsgeyser-banner, #appsgeyser-banner,
+iframe[src*="appsgeyser"],
+div[style*="appsgeyser"] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  width: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}

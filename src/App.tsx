@@ -171,9 +171,14 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void, key?: string }) => (
   </motion.div>
 );
 
-const HomeScreen = ({ addDownload, addToast, settings }: { addDownload: (video: TikTokVideo, type: any) => void, addToast: (m: string, t?: any) => void, settings: AppSettings }) => {
+const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzing }: { 
+  addDownload: (video: TikTokVideo, type: any) => void, 
+  addToast: (m: string, t?: any) => void, 
+  settings: AppSettings,
+  isAnalyzing: boolean,
+  setIsAnalyzing: (v: boolean) => void
+}) => {
   const [url, setUrl] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<TikTokVideo | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -187,10 +192,9 @@ const HomeScreen = ({ addDownload, addToast, settings }: { addDownload: (video: 
             const { value } = await Clipboard.read();
             text = value;
           } else {
-            // navigator.clipboard.readText() might require user interaction in some browsers
-            // so we handle it gracefully
+            // Check if we have permission first to avoid annoying prompts
             const result = await navigator.permissions.query({ name: 'clipboard-read' as any });
-            if (result.state === 'granted' || result.state === 'prompt') {
+            if (result.state === 'granted') {
               text = await navigator.clipboard.readText();
             }
           }
@@ -200,7 +204,7 @@ const HomeScreen = ({ addDownload, addToast, settings }: { addDownload: (video: 
             addToast("Link detected from clipboard");
           }
         } catch (e) {
-          // Fail silently for auto-paste
+          // Fail silently for auto-paste permission/errors
         }
       };
 
@@ -218,17 +222,17 @@ const HomeScreen = ({ addDownload, addToast, settings }: { addDownload: (video: 
         const { value } = await Clipboard.read();
         text = value;
       } else {
+        // Direct attempt for manual click - browser usually allows this on click
         text = await navigator.clipboard.readText();
       }
       
       if (text) {
         setUrl(text);
-        addToast("URL Pasted from clipboard");
-      } else {
-        addToast("Clipboard is empty", "error");
+        addToast("URL Pasted");
       }
     } catch (e) {
-      addToast("Clipboard access denied", 'error');
+      // Fail silently if access is blocked, user can still type
+      console.warn("Clipboard access blocked");
     }
   };
 
@@ -239,7 +243,7 @@ const HomeScreen = ({ addDownload, addToast, settings }: { addDownload: (video: 
       return;
     }
     
-    setIsProcessing(true);
+    setIsAnalyzing(true);
     setResult(null);
     setError(null);
 
@@ -251,14 +255,12 @@ const HomeScreen = ({ addDownload, addToast, settings }: { addDownload: (video: 
       setError(err.message);
       addToast(err.message, 'error');
     } finally {
-      setIsProcessing(false);
+      setIsAnalyzing(false);
     }
   };
 
   return (
     <div className="flex flex-col gap-8 pb-32">
-      {/* Hero */}
-      <div className="relative pt-12 text-center space-y-3">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -276,7 +278,6 @@ const HomeScreen = ({ addDownload, addToast, settings }: { addDownload: (video: 
             Preserve your favorite moments in HD quality, instantly.
           </p>
         </motion.div>
-      </div>
 
       {/* Input */}
       <GlassCard className="mx-4 border-white/5 shadow-2xl">
@@ -301,9 +302,9 @@ const HomeScreen = ({ addDownload, addToast, settings }: { addDownload: (video: 
           <NeoButton 
             className="w-full py-5 rounded-[22px] text-lg"
             onClick={() => handleAnalyze()}
-            disabled={isProcessing}
+            disabled={isAnalyzing}
           >
-            {isProcessing ? (
+            {isAnalyzing ? (
               <div className="flex items-center gap-3">
                 <RefreshCw className="w-5 h-5 animate-spin" />
                 <span className="tracking-widest uppercase text-sm font-bold">Processing Engine...</span>
@@ -320,7 +321,7 @@ const HomeScreen = ({ addDownload, addToast, settings }: { addDownload: (video: 
 
       {/* States: Error or Result */}
       <AnimatePresence mode="wait">
-        {isProcessing && (
+        {isAnalyzing && (
           <motion.div 
             key="processing"
             initial={{ opacity: 0 }} 
@@ -447,62 +448,137 @@ const HomeScreen = ({ addDownload, addToast, settings }: { addDownload: (video: 
   );
 };
 
-const DownloadsScreen = ({ tasks, removeTask }: { tasks: DownloadTask[], removeTask: (id: string) => void }) => (
-  <div className="p-4 space-y-6 pb-32">
-      <div className="flex items-center justify-between pt-8 px-2">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight text-[var(--text-main)]">Downloads</h2>
-        <p className="text-xs text-[var(--text-dim)] uppercase tracking-[0.2em] font-medium mt-1">Processed Files</p>
-      </div>
-      <NeoButton variant="ghost" className="p-2 px-3 text-[10px] font-black tracking-widest uppercase opacity-40 hover:opacity-100" onClick={() => tasks.forEach(t => removeTask(t.id))}>
-        Clear List
-      </NeoButton>
-    </div>
-    
-    <div className="space-y-4">
-      {tasks.length === 0 ? (
-        <div className="py-20 flex flex-col items-center opacity-20 text-[var(--text-main)]">
-          <Download className="w-16 h-16 stroke-[1]" />
-          <p className="mt-4 text-sm font-medium">No active or past downloads</p>
-        </div>
-      ) : (
-        tasks.sort((a,b) => b.timestamp - a.timestamp).map((task) => (
-          <GlassCard key={task.id} className="!p-4 border-[var(--glass-border)] group">
-            <div className="flex gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-[var(--glass-bg)] flex-shrink-0 flex items-center justify-center border border-[var(--glass-border)] overflow-hidden">
-                <img src={task.video.thumbnail} className="w-full h-full object-cover opacity-40 group-hover:opacity-100 transition-opacity" />
-              </div>
-              <div className="flex-1 min-w-0 flex flex-col justify-center">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-bold truncate uppercase tracking-wider text-[var(--text-main)]">{task.video.id}_{task.type}.{task.type === 'mp3' ? 'mp3' : 'mp4'}</h3>
-                  <span className={`text-[9px] font-black px-1.5 py-0.5 rounded uppercase ${task.status === 'completed' ? 'text-green-400' : 'text-neon-blue'}`}>
-                    {task.status}
-                  </span>
-                </div>
-                <p className="text-[10px] text-[var(--text-dim)] mt-1 uppercase font-bold tracking-tighter">
-                  {task.video.fileSize || '12.4 MB'} • {new Date(task.timestamp).toLocaleDateString()}
-                </p>
-                <div className="w-full bg-[var(--glass-bg)] h-1.5 rounded-full mt-3 overflow-hidden">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${task.progress}%` }}
-                    className="h-full neo-gradient" 
-                  />
-                </div>
-              </div>
-              <button 
-                onClick={() => removeTask(task.id)}
-                className="self-center p-2 text-[var(--text-dim)] hover:text-red-400 transition-colors"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
+const ProcessingModal = ({ isOpen }: { isOpen: boolean }) => (
+  <AnimatePresence>
+    {isOpen && (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="absolute inset-0 bg-black/80 backdrop-blur-xl"
+        />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 20 }}
+          className="relative w-full max-w-xs glass border-white/10 rounded-[40px] p-10 shadow-2xl text-center space-y-8 overflow-hidden"
+        >
+          <div className="relative">
+            <div className="w-24 h-24 rounded-[32px] neo-gradient mx-auto flex items-center justify-center shadow-[0_0_50px_-10px_var(--neon-purple)] animate-pulse">
+              <RefreshCw className="w-12 h-12 text-white animate-spin" />
             </div>
-          </GlassCard>
-        ))
-      )}
-    </div>
-  </div>
+            <motion.div 
+              animate={{ rotate: 360 }}
+              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              className="absolute -inset-4 border-2 border-dashed border-neon-blue/20 rounded-full"
+            />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-xl font-bold tracking-tight text-white">Analyzing Engine</h3>
+            <p className="text-[10px] text-neon-blue font-black tracking-[0.4em] uppercase opacity-70">Fetching Deep Data</p>
+          </div>
+          <div className="flex gap-1 justify-center">
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                animate={{ opacity: [0.3, 1, 0.3] }}
+                transition={{ repeat: Infinity, duration: 1, delay: i * 0.2 }}
+                className="w-1.5 h-1.5 rounded-full bg-white"
+              />
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    )}
+  </AnimatePresence>
 );
+
+const DownloadsScreen = ({ tasks, removeTask, addToast }: { 
+  tasks: DownloadTask[], 
+  removeTask: (id: string) => void,
+  addToast: (m: string, t?: any) => void
+}) => {
+  const handleOpenFile = async (task: DownloadTask) => {
+    try {
+      await TikTokDownloaderService.openFile(task);
+    } catch (e: any) {
+      addToast(e.message, 'error');
+    }
+  };
+
+  return (
+    <div className="p-4 space-y-6 pb-32">
+        <div className="flex items-center justify-between pt-8 px-2">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight text-[var(--text-main)]">Downloads</h2>
+          <p className="text-xs text-[var(--text-dim)] uppercase tracking-[0.2em] font-medium mt-1">Processed Files</p>
+        </div>
+        <NeoButton variant="ghost" className="p-2 px-3 text-[10px] font-black tracking-widest uppercase opacity-40 hover:opacity-100" onClick={() => tasks.forEach(t => removeTask(t.id))}>
+          Clear List
+        </NeoButton>
+      </div>
+      
+      <div className="space-y-4">
+        {tasks.length === 0 ? (
+          <div className="py-20 flex flex-col items-center opacity-20 text-[var(--text-main)]">
+            <Download className="w-16 h-16 stroke-[1]" />
+            <p className="mt-4 text-sm font-medium">No active or past downloads</p>
+          </div>
+        ) : (
+          tasks.sort((a,b) => b.timestamp - a.timestamp).map((task) => (
+            <GlassCard key={task.id} className="!p-4 border-[var(--glass-border)] group">
+              <div className="flex gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-[var(--glass-bg)] flex-shrink-0 flex items-center justify-center border border-[var(--glass-border)] overflow-hidden">
+                  <img src={task.video.thumbnail} className="w-full h-full object-cover opacity-40 group-hover:opacity-100 transition-opacity" />
+                </div>
+                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-bold truncate uppercase tracking-wider text-[var(--text-main)]">{task.video.id}_{task.type}.{task.type === 'mp3' ? 'mp3' : 'mp4'}</h3>
+                    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded uppercase ${task.status === 'completed' ? 'text-green-400' : 'text-neon-blue'}`}>
+                      {task.status}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-[var(--text-dim)] mt-1 uppercase font-bold tracking-tighter">
+                    {task.video.fileSize || '12.4 MB'} • {new Date(task.timestamp).toLocaleDateString()}
+                  </p>
+                  
+                  {task.status === 'downloading' && (
+                    <div className="w-full bg-[var(--glass-bg)] h-1.5 rounded-full mt-3 overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${task.progress}%` }}
+                        className="h-full neo-gradient" 
+                      />
+                    </div>
+                  )}
+
+                  {task.status === 'completed' && (
+                    <div className="mt-3 flex gap-2">
+                       <NeoButton 
+                        variant="ghost" 
+                        className="!py-1 !px-3 text-[9px] font-black tracking-widest glass !rounded-lg border-white/5"
+                        onClick={() => handleOpenFile(task)}
+                      >
+                        OPEN FILE
+                      </NeoButton>
+                    </div>
+                  )}
+                </div>
+                <button 
+                  onClick={() => removeTask(task.id)}
+                  className="self-center p-2 text-[var(--text-dim)] hover:text-red-400 transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            </GlassCard>
+          ))
+        )}
+      </div>
+    </div>
+  );
+};
 
 const SettingsScreen = ({ settings, setSettings, addToast, setShowFeedback }: { 
   settings: AppSettings, 
@@ -682,6 +758,7 @@ const PALETTES = [
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [activeScreen, setActiveScreen] = useState<Screen>('home');
   const [tasks, setTasks] = useState<DownloadTask[]>([]);
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
@@ -845,9 +922,27 @@ export default function App() {
                   exit={{ opacity: 0, x: -30, filter: 'blur(10px)' }}
                   transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  {activeScreen === 'home' && <HomeScreen addDownload={addDownloadTask} addToast={addToast} settings={settings} />}
-                  {activeScreen === 'downloads' && <DownloadsScreen tasks={tasks} removeTask={removeTask} />}
-                  {activeScreen === 'favorites' && <div className="p-20 text-center opacity-30 italic">Collection module loading...</div>}
+                  {activeScreen === 'home' && (
+                    <>
+                      <HomeScreen 
+                        addDownload={addDownloadTask} 
+                        addToast={addToast} 
+                        settings={settings} 
+                        isAnalyzing={isAnalyzing}
+                        setIsAnalyzing={setIsAnalyzing}
+                      />
+                      <ProcessingModal isOpen={isAnalyzing} />
+                    </>
+                  )}
+                  {activeScreen === 'downloads' && <DownloadsScreen tasks={tasks} removeTask={removeTask} addToast={addToast} />}
+                  {activeScreen === 'favorites' && (
+                    <div className="py-20 flex flex-col items-center justify-center gap-6 opacity-30 text-center">
+                      <div className="w-16 h-16 rounded-2xl neo-gradient flex items-center justify-center animate-pulse">
+                        <Heart className="w-8 h-8 text-white" />
+                      </div>
+                      <p className="text-sm font-bold tracking-widest uppercase italic">Collection Module Online Soon</p>
+                    </div>
+                  )}
                   {activeScreen === 'settings' && <SettingsScreen settings={settings} setSettings={setSettings} addToast={addToast} setShowFeedback={setShowFeedback} />}
                 </motion.div>
               </AnimatePresence>

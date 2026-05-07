@@ -3,6 +3,7 @@ import { Browser } from '@capacitor/browser';
 import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Media } from '@capacitor-community/media';
+import { FileOpener } from '@capacitor-community/file-opener';
 
 /**
  * SSSTikTok Downloader Service
@@ -39,7 +40,6 @@ export const TikTokDownloaderService = {
                   task.type === 'nowm' ? task.video.downloadUrls.noWatermark : 
                   task.video.downloadUrls.mp3;
 
-      // Increase timeout for large files
       const response = await fetch(url);
       
       if (!response.ok) {
@@ -78,6 +78,8 @@ export const TikTokDownloaderService = {
       if (Capacitor.isNativePlatform()) {
         try {
           // 1. Permissions
+          // On Android 13+, WRITE_EXTERNAL_STORAGE is deprecated. 
+          // Filesystem plugin handles this mostly, but Media needs its own permissions.
           if (Capacitor.getPlatform() === 'android') {
             await Filesystem.requestPermissions();
           }
@@ -85,39 +87,52 @@ export const TikTokDownloaderService = {
           // 2. Convert to Base64
           const base64Data = await TikTokDownloaderService._blobToBase64(blob);
           
-          // 3. Save to app cache first
-          const tempFileName = `temp_${Date.now()}_${task.fileName}`;
+          // 3. Save to app cache first as a bridge
+          const tempPath = `ssstiktok_${Date.now()}_${task.fileName}`;
           const savedFile = await Filesystem.writeFile({
-            path: tempFileName,
+            path: tempPath,
             data: base64Data,
             directory: Directory.Cache
           });
 
-          // 4. Save to Gallery / Public Folder
+          // 4. Save to Public Folders / Gallery
           if (task.type === 'mp3') {
-            // Audio: Save to Documents/Music
+            // Save Audio to Documents/SSSTikTok/Music
+            const audioPath = `SSSTikTok/Music/${task.fileName}`;
             await Filesystem.writeFile({
-              path: `SSSTikTok/Music/${task.fileName}`,
+              path: audioPath,
               data: base64Data,
               directory: Directory.Documents,
               recursive: true
             });
-          } else {
-            // Video: Use Media plugin to put it in Gallery
-            await Media.saveVideo({
-              path: savedFile.uri
+            
+            // Store the final URI in task for opening later
+            const finalFile = await Filesystem.getUri({
+              directory: Directory.Documents,
+              path: audioPath
             });
+            task.savedUri = finalFile.uri;
+          } else {
+            // Save Video to Gallery using Media plugin
+            await Media.saveVideo({
+              path: savedFile.uri,
+              albumIdentifier: 'SSSTikTok'
+            });
+            
+            // On Android, mediaResult might contain a local path
+            task.savedUri = savedFile.uri; 
           }
 
-          // Clean up temp file
-          await Filesystem.deleteFile({
-            path: tempFileName,
-            directory: Directory.Cache
-          });
+          // Clean up the cache temp file? 
+          // Actually, if we want to "Open File" via FileOpener, sometimes using the Cache path is safer.
+          // But user wants it in Gallery. Media plugin handles that.
 
         } catch (nativeError) {
-          console.error("Native save failed, trying fallback:", nativeError);
-          // Fallback to browser-style download if native fails
+          console.error("Native save failed:", nativeError);
+          // Only throw if it's a permission issue we can't recover from
+          if (nativeError instanceof Error && nativeError.message.includes("permission")) {
+            throw new Error("Permission not granted. Download failed.");
+          }
           await TikTokDownloaderService._browserFallback(blob, task.fileName);
         }
       } else {
@@ -130,31 +145,27 @@ export const TikTokDownloaderService = {
 
     } catch (error) {
       console.error('Download failed:', error);
-      
-      // Final Fallback: Direct download attempt if everything else failed
-      try {
-        const fallbackUrl = task.type === 'hd' ? task.video.downloadUrls.noWatermarkHd : 
-                            task.type === 'nowm' ? task.video.downloadUrls.noWatermark : 
-                            task.video.downloadUrls.mp3;
-        
-        if (Capacitor.isNativePlatform()) {
-          await Browser.open({ url: fallbackUrl });
-        } else {
-          const a = document.createElement('a');
-          a.href = fallbackUrl;
-          a.download = task.fileName;
-          a.target = '_blank';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        }
-        
-        onProgress(100);
-        onStatusChange('completed');
-      } catch (fallbackError) {
-        onStatusChange('error');
-        throw error;
-      }
+      onStatusChange('error');
+      throw error;
+    }
+  },
+
+  /**
+   * Opens a previously downloaded file using native intent
+   */
+  openFile: async (task: DownloadTask): Promise<void> => {
+    if (!Capacitor.isNativePlatform() || !task.savedUri) {
+      return;
+    }
+
+    try {
+      await FileOpener.open({
+        filePath: task.savedUri,
+        contentType: task.type === 'mp3' ? 'audio/mpeg' : 'video/mp4'
+      });
+    } catch (e) {
+      console.error("Could not open file:", e);
+      throw new Error("Could not open file. Try viewing it in your Gallery.");
     }
   },
 
@@ -173,14 +184,5 @@ export const TikTokDownloaderService = {
       window.URL.revokeObjectURL(blobUrl);
       document.body.removeChild(a);
     }, 100);
-  },
-
-  /**
-   * Simulates the final browser 'Save As' action
-   */
-  _saveToBrowser: (fileName: string) => {
-    const dummyContent = "SSSTikTok - Downloaded Video Data Stream";
-    const blob = new Blob([dummyContent], { type: 'video/mp4' });
-    TikTokDownloaderService._browserFallback(blob, fileName);
   }
 };
