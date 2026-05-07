@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-neon-purple: #9d00ff;
+  --color-neon-blue: #00d4ff;
+  --color-neon-pink: #ff00ea;
+  
+  --animate-glow: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 10px -5px var(--color-neon-purple);
+  }
+  to {
+    box-shadow: 0 0 20px 2px var(--color-neon-purple);
+  }
+}
+
+:root {
+  background-color: #05010d;
+  color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.neon-border {
+  border: 1px solid transparent;
+  background-image: linear-gradient(#05010d, #05010d), linear-gradient(to right, #9d00ff, #00d4ff);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+.neo-gradient {
+  background: linear-gradient(135deg, #9d00ff 0%, #00d4ff 100%);
+}
+
+.neo-text-gradient {
+  background: linear-gradient(135deg, #9d00ff 0%, #00d4ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
