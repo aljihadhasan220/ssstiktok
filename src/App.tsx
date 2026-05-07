@@ -40,7 +40,7 @@ const Toast = ({ message, type = 'success', onClose }: { message: string, type?:
     initial={{ opacity: 0, y: 50, scale: 0.9 }}
     animate={{ opacity: 1, y: 0, scale: 1 }}
     exit={{ opacity: 0, scale: 0.5 }}
-    className={`fixed bottom-28 left-4 right-4 z-[100] p-4 rounded-2xl shadow-2xl flex items-center gap-3 glass border-white/10 ${
+    className={`fixed bottom-28 left-4 right-4 z-[100] p-4 rounded-2xl shadow-2xl flex items-center gap-3 glass border-[var(--glass-border)] ${
       type === 'success' ? 'bg-green-500/10' : 'bg-red-500/10'
     }`}
   >
@@ -49,16 +49,16 @@ const Toast = ({ message, type = 'success', onClose }: { message: string, type?:
     ) : (
       <AlertCircle className="w-5 h-5 text-red-400" />
     )}
-    <p className="text-sm font-medium text-white/90">{message}</p>
-    <button onClick={onClose} className="ml-auto text-white/40"><Trash2 className="w-4 h-4" /></button>
+    <p className="text-sm font-medium text-[var(--text-main)]/90">{message}</p>
+    <button onClick={onClose} className="ml-auto text-[var(--text-dim)]"><Trash2 className="w-4 h-4" /></button>
   </motion.div>
 );
 
 const NeoButton = ({ children, onClick, className = "", variant = "primary", disabled = false }: any) => {
   const variants: any = {
     primary: "neo-gradient text-white shadow-[0_0_15px_-3px_var(--neon-purple)]",
-    outline: "glass border-white/20 text-white hover:bg-white/5",
-    ghost: "text-white/60 hover:text-white",
+    outline: "glass border-[var(--glass-border)] text-[var(--text-main)] hover:bg-[var(--glass-bg)]",
+    ghost: "text-[var(--text-dim)] hover:text-[var(--text-main)]",
     danger: "bg-red-500/20 text-red-500 border border-red-500/30"
   };
 
@@ -112,9 +112,9 @@ const Navbar = ({ active, setActive }: { active: Screen, setActive: (s: Screen) 
                 )}
               </AnimatePresence>
               <item.icon 
-                className={`w-6 h-6 z-10 transition-all duration-300 ${isActive ? 'text-neon-blue scale-110' : 'text-white/30'}`} 
+                className={`w-6 h-6 z-10 transition-all duration-300 ${isActive ? 'text-neon-blue scale-110' : 'text-[var(--text-dim)]'}`} 
               />
-              <span className={`text-[10px] font-bold z-10 mt-1 uppercase tracking-wider transition-colors duration-300 ${isActive ? 'text-white' : 'text-white/30'}`}>
+              <span className={`text-[10px] font-bold z-10 mt-1 uppercase tracking-wider transition-colors duration-300 ${isActive ? 'text-[var(--text-main)]' : 'text-[var(--text-dim)]'}`}>
                 {item.label}
               </span>
             </button>
@@ -264,15 +264,15 @@ const HomeScreen = ({ addDownload, addToast, settings }: { addDownload: (video: 
           animate={{ opacity: 1, scale: 1 }}
           className="space-y-4"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 glass rounded-full border-white/10 mb-4 animate-pulse">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 glass rounded-full border-[var(--glass-border)] mb-4 animate-pulse">
             <ShieldCheck className="w-4 h-4 text-neon-blue" />
-            <span className="text-[10px] font-bold tracking-widest uppercase text-white/60">Secure & Watermark Free</span>
+            <span className="text-[10px] font-bold tracking-widest uppercase text-[var(--text-dim)]">Secure & Watermark Free</span>
           </div>
-          <h2 className="text-[38px] sm:text-[42px] font-bold px-4 leading-[1.1] tracking-tight">
+          <h2 className="text-[38px] sm:text-[42px] font-bold px-4 leading-[1.1] tracking-tight text-[var(--text-main)]">
             TikTok Video <br />
             <span className="neo-text-gradient italic">Downloader</span>
           </h2>
-          <p className="text-white/40 text-sm max-w-[280px] mx-auto leading-relaxed">
+          <p className="text-[var(--text-dim)] text-sm max-w-[280px] mx-auto leading-relaxed">
             Preserve your favorite moments in HD quality, instantly.
           </p>
         </motion.div>
@@ -287,12 +287,12 @@ const HomeScreen = ({ addDownload, addToast, settings }: { addDownload: (video: 
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder="Insert a TikTok link here..."
-              className="w-full bg-white/5 border border-white/10 rounded-2xl py-6 pl-14 pr-24 text-sm focus:outline-none focus:border-neon-purple/50 focus:ring-4 focus:ring-neon-purple/10 transition-all placeholder:text-white/20"
+              className="w-full bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-2xl py-6 pl-14 pr-24 text-sm focus:outline-none focus:border-neon-purple/50 focus:ring-4 focus:ring-neon-purple/10 transition-all placeholder:text-[var(--text-dim)]"
             />
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-dim)]" />
             <button 
               onClick={handlePaste}
-              className="absolute right-4 top-1/2 -translate-y-1/2 px-4 py-2.5 glass rounded-xl text-[10px] font-bold uppercase tracking-wider hover:bg-white/10 transition-colors border-white/10"
+              className="absolute right-4 top-1/2 -translate-y-1/2 px-4 py-2.5 glass rounded-xl text-[10px] font-bold uppercase tracking-wider hover:bg-[var(--glass-bg)] transition-colors border-[var(--glass-border)]"
             >
               Paste
             </button>
@@ -387,20 +387,20 @@ const HomeScreen = ({ addDownload, addToast, settings }: { addDownload: (video: 
                       </div>
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs font-bold truncate tracking-tight">{result.author.id}</p>
-                      <p className="text-[10px] text-white/30 truncate font-bold uppercase tracking-wider">Verified Identity</p>
+                      <p className="text-xs font-bold truncate tracking-tight text-[var(--text-main)]">{result.author.id}</p>
+                      <p className="text-[10px] text-[var(--text-dim)] truncate font-bold uppercase tracking-wider">Verified Identity</p>
                     </div>
                   </div>
                   
-                  <p className="text-[11px] text-white/70 line-clamp-4 leading-relaxed font-medium">
+                  <p className="text-[11px] text-[var(--text-main)]/70 line-clamp-4 leading-relaxed font-medium">
                     {result.description}
                   </p>
 
                   <div className="flex flex-wrap gap-2">
-                    <div className="px-2 py-1 glass rounded-lg text-[9px] font-bold text-white/40 flex items-center gap-1">
+                    <div className="px-2 py-1 glass rounded-lg text-[9px] font-bold text-[var(--text-dim)] flex items-center gap-1">
                       <Heart className="w-3 h-3 text-neon-pink" /> {result.stats.likes}
                     </div>
-                    <div className="px-2 py-1 glass rounded-lg text-[9px] font-bold text-white/40 flex items-center gap-1">
+                    <div className="px-2 py-1 glass rounded-lg text-[9px] font-bold text-[var(--text-dim)] flex items-center gap-1">
                       <Share2 className="w-3 h-3 text-neon-blue" /> {result.stats.shares}
                     </div>
                   </div>
@@ -420,14 +420,14 @@ const HomeScreen = ({ addDownload, addToast, settings }: { addDownload: (video: 
                 <div className="grid grid-cols-2 gap-3">
                   <NeoButton 
                     variant="outline" 
-                    className="py-4 text-[10px] sm:text-xs tracking-widest border-white/5 font-black uppercase text-white/80"
+                    className="py-4 text-[10px] sm:text-xs tracking-widest border-[var(--glass-border)] font-black uppercase text-[var(--text-main)]/80"
                     onClick={() => addDownload(result, 'nowm')}
                   >
                     NO WATERMARK
                   </NeoButton>
                   <NeoButton 
                     variant="ghost" 
-                    className="py-4 text-[10px] sm:text-xs tracking-widest glass font-black uppercase text-white/80"
+                    className="py-4 text-[10px] sm:text-xs tracking-widest glass font-black uppercase text-[var(--text-main)]/80"
                     onClick={() => addDownload(result, 'mp3')}
                   >
                     DOWNLOAD MP3
@@ -449,10 +449,10 @@ const HomeScreen = ({ addDownload, addToast, settings }: { addDownload: (video: 
 
 const DownloadsScreen = ({ tasks, removeTask }: { tasks: DownloadTask[], removeTask: (id: string) => void }) => (
   <div className="p-4 space-y-6 pb-32">
-    <div className="flex items-center justify-between pt-8 px-2">
+      <div className="flex items-center justify-between pt-8 px-2">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Downloads</h2>
-        <p className="text-xs text-white/30 uppercase tracking-[0.2em] font-medium mt-1">Processed Files</p>
+        <h2 className="text-2xl font-bold tracking-tight text-[var(--text-main)]">Downloads</h2>
+        <p className="text-xs text-[var(--text-dim)] uppercase tracking-[0.2em] font-medium mt-1">Processed Files</p>
       </div>
       <NeoButton variant="ghost" className="p-2 px-3 text-[10px] font-black tracking-widest uppercase opacity-40 hover:opacity-100" onClick={() => tasks.forEach(t => removeTask(t.id))}>
         Clear List
@@ -461,28 +461,28 @@ const DownloadsScreen = ({ tasks, removeTask }: { tasks: DownloadTask[], removeT
     
     <div className="space-y-4">
       {tasks.length === 0 ? (
-        <div className="py-20 flex flex-col items-center opacity-20">
+        <div className="py-20 flex flex-col items-center opacity-20 text-[var(--text-main)]">
           <Download className="w-16 h-16 stroke-[1]" />
           <p className="mt-4 text-sm font-medium">No active or past downloads</p>
         </div>
       ) : (
         tasks.sort((a,b) => b.timestamp - a.timestamp).map((task) => (
-          <GlassCard key={task.id} className="!p-4 border-white/5 group">
+          <GlassCard key={task.id} className="!p-4 border-[var(--glass-border)] group">
             <div className="flex gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-white/[0.02] flex-shrink-0 flex items-center justify-center border border-white/5 overflow-hidden">
+              <div className="w-16 h-16 rounded-2xl bg-[var(--glass-bg)] flex-shrink-0 flex items-center justify-center border border-[var(--glass-border)] overflow-hidden">
                 <img src={task.video.thumbnail} className="w-full h-full object-cover opacity-40 group-hover:opacity-100 transition-opacity" />
               </div>
               <div className="flex-1 min-w-0 flex flex-col justify-center">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-bold truncate uppercase tracking-wider">{task.video.id}_{task.type}.{task.type === 'mp3' ? 'mp3' : 'mp4'}</h3>
+                  <h3 className="text-xs font-bold truncate uppercase tracking-wider text-[var(--text-main)]">{task.video.id}_{task.type}.{task.type === 'mp3' ? 'mp3' : 'mp4'}</h3>
                   <span className={`text-[9px] font-black px-1.5 py-0.5 rounded uppercase ${task.status === 'completed' ? 'text-green-400' : 'text-neon-blue'}`}>
                     {task.status}
                   </span>
                 </div>
-                <p className="text-[10px] text-white/30 mt-1 uppercase font-bold tracking-tighter">
+                <p className="text-[10px] text-[var(--text-dim)] mt-1 uppercase font-bold tracking-tighter">
                   {task.video.fileSize || '12.4 MB'} • {new Date(task.timestamp).toLocaleDateString()}
                 </p>
-                <div className="w-full bg-white/5 h-1.5 rounded-full mt-3 overflow-hidden">
+                <div className="w-full bg-[var(--glass-bg)] h-1.5 rounded-full mt-3 overflow-hidden">
                   <motion.div 
                     initial={{ width: 0 }}
                     animate={{ width: `${task.progress}%` }}
@@ -492,7 +492,7 @@ const DownloadsScreen = ({ tasks, removeTask }: { tasks: DownloadTask[], removeT
               </div>
               <button 
                 onClick={() => removeTask(task.id)}
-                className="self-center p-2 text-white/20 hover:text-red-400 transition-colors"
+                className="self-center p-2 text-[var(--text-dim)] hover:text-red-400 transition-colors"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
@@ -538,96 +538,96 @@ const SettingsScreen = ({ settings, setSettings, addToast, setShowFeedback }: {
       </div>
 
       <div className="space-y-8">
-        <div className="space-y-4">
-          <h3 className="text-[10px] uppercase tracking-[0.3em] text-white/20 font-black px-2">Visual Engine</h3>
-          <GlassCard className="!p-0 overflow-hidden divide-y divide-white/5 border-white/5">
-            <div className="flex items-center justify-between p-5">
-              <div className="flex items-center gap-4">
-                <div className="w-11 h-11 rounded-2xl bg-neon-purple/20 flex items-center justify-center transition-colors">
-                  {settings.darkMode ? <Moon className="w-5 h-5 text-neon-purple" /> : <Sun className="w-5 h-5 text-neon-purple" />}
-                </div>
-                <div>
-                  <p className="text-sm font-bold tracking-tight">Theme Mode</p>
-                  <p className="text-[10px] text-white/30 uppercase font-medium">{settings.darkMode ? 'True OLED Dark' : 'Crystal Light'}</p>
-                </div>
-              </div>
-              <button 
-                onClick={() => {
-                  setSettings((prev: any) => ({ ...prev, darkMode: !prev.darkMode }));
-                  addToast(`Theme switched to ${!settings.darkMode ? 'Dark' : 'Light'}`);
-                }}
-                className={`w-12 h-6 rounded-full p-1 transition-all duration-500 ${settings.darkMode ? 'neo-gradient' : 'bg-black/10 dark:bg-white/10'}`}
-              >
-                <motion.div 
-                  animate={{ x: settings.darkMode ? 24 : 0 }}
-                  className="w-4 h-4 rounded-full bg-white shadow-lg" 
-                />
-              </button>
-            </div>
-            
-            <div className="flex flex-col p-5 gap-4">
-              <div className="flex items-center justify-between">
+          <div className="space-y-4">
+            <h3 className="text-[10px] uppercase tracking-[0.3em] text-[var(--text-dim)] font-black px-2">Visual Engine</h3>
+            <GlassCard className="!p-0 overflow-hidden divide-y divide-white/5 border-white/5">
+              <div className="flex items-center justify-between p-5">
                 <div className="flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-2xl bg-neon-blue/20 flex items-center justify-center">
-                    <Palette className="w-5 h-5 text-neon-blue" />
+                  <div className="w-11 h-11 rounded-2xl bg-neon-purple/20 flex items-center justify-center transition-colors">
+                    {settings.darkMode ? <Moon className="w-5 h-5 text-neon-purple" /> : <Sun className="w-5 h-5 text-neon-purple" />}
                   </div>
                   <div>
-                    <p className="text-sm font-bold tracking-tight">Ui Palette</p>
-                    <p className="text-[10px] text-white/30 uppercase font-medium">Futuristic Neon</p>
+                    <p className="text-sm font-bold tracking-tight">Theme Mode</p>
+                    <p className="text-[10px] text-[var(--text-dim)] uppercase font-medium">{settings.darkMode ? 'True OLED Dark' : 'Crystal Light'}</p>
                   </div>
                 </div>
+                <button 
+                  onClick={() => {
+                    setSettings((prev: any) => ({ ...prev, darkMode: !prev.darkMode }));
+                    addToast(`Theme: ${!settings.darkMode ? 'Dark' : 'Light'}`);
+                  }}
+                  className={`w-12 h-6 rounded-full p-1 transition-all duration-500 ${settings.darkMode ? 'neo-gradient' : 'bg-black/10 dark:bg-white/10'}`}
+                >
+                  <motion.div 
+                    animate={{ x: settings.darkMode ? 24 : 0 }}
+                    className="w-4 h-4 rounded-full bg-white shadow-lg" 
+                  />
+                </button>
               </div>
-              <div className="flex gap-3 px-2">
-                {PALETTES.map((p) => (
-                  <button
-                    key={p.name}
-                    onClick={() => {
-                      setSettings((prev: any) => ({ ...prev, palette: p }));
-                      addToast(`${p.name} palette applied`);
-                    }}
-                    className={`relative w-10 h-10 rounded-full border-2 transition-all p-0.5 ${
-                      settings.palette.name === p.name ? 'border-white scale-110 shadow-lg' : 'border-white/10'
-                    }`}
-                  >
-                    <div className="w-full h-full rounded-full overflow-hidden flex rotate-45">
-                      <div className="w-1/2 h-full" style={{ background: p.primary }} />
-                      <div className="w-1/2 h-full" style={{ background: p.secondary }} />
+              
+              <div className="flex flex-col p-5 gap-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-11 h-11 rounded-2xl bg-neon-blue/20 flex items-center justify-center">
+                      <Palette className="w-5 h-5 text-neon-blue" />
                     </div>
-                  </button>
-                ))}
+                    <div>
+                      <p className="text-sm font-bold tracking-tight">Ui Palette</p>
+                      <p className="text-[10px] text-[var(--text-dim)] uppercase font-medium">Futuristic Neon</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-3 px-2">
+                  {PALETTES.map((p) => (
+                    <button
+                      key={p.name}
+                      onClick={() => {
+                        setSettings((prev: any) => ({ ...prev, palette: p }));
+                        addToast(`${p.name} palette applied`);
+                      }}
+                      className={`relative w-10 h-10 rounded-full border-2 transition-all p-0.5 ${
+                        settings.palette.name === p.name ? 'border-[var(--text-main)] scale-110 shadow-lg' : 'border-white/10'
+                      }`}
+                    >
+                      <div className="w-full h-full rounded-full overflow-hidden flex rotate-45">
+                        <div className="w-1/2 h-full" style={{ background: p.primary }} />
+                        <div className="w-1/2 h-full" style={{ background: p.secondary }} />
+                      </div>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          </GlassCard>
-        </div>
+            </GlassCard>
+          </div>
 
-        <div className="space-y-4">
-          <h3 className="text-[10px] uppercase tracking-[0.3em] text-white/20 font-black px-2">Automation</h3>
-          <GlassCard className="!p-0 overflow-hidden border-white/5">
-             <div className="flex items-center justify-between p-5">
-              <div className="flex items-center gap-4">
-                <div className="w-11 h-11 rounded-2xl bg-white/5 flex items-center justify-center">
-                  <ClipboardIcon className="w-5 h-5 text-white/60" />
+          <div className="space-y-4">
+            <h3 className="text-[10px] uppercase tracking-[0.3em] text-[var(--text-dim)] font-black px-2">Automation</h3>
+            <GlassCard className="!p-0 overflow-hidden border-white/5">
+               <div className="flex items-center justify-between p-5">
+                <div className="flex items-center gap-4">
+                  <div className="w-11 h-11 rounded-2xl bg-white/5 flex items-center justify-center">
+                    <ClipboardIcon className="w-5 h-5 text-[var(--text-main)]/60" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold tracking-tight">Auto Paste</p>
+                    <p className="text-[10px] text-[var(--text-dim)] uppercase font-medium">Link detection</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-bold tracking-tight">Auto Paste</p>
-                  <p className="text-[10px] text-white/30 uppercase font-medium">Link detection</p>
-                </div>
+                 <button 
+                  onClick={() => {
+                    setSettings((prev: any) => ({ ...prev, autoPaste: !prev.autoPaste }));
+                    addToast(`Auto paste ${!settings.autoPaste ? 'enabled' : 'disabled'}`);
+                  }}
+                  className={`w-12 h-6 rounded-full p-1 transition-all duration-500 ${settings.autoPaste ? 'neo-gradient' : 'bg-white/10'}`}
+                >
+                  <motion.div 
+                    animate={{ x: settings.autoPaste ? 24 : 0 }}
+                    className="w-4 h-4 rounded-full bg-white shadow-lg" 
+                  />
+                </button>
               </div>
-               <button 
-                onClick={() => {
-                  setSettings((prev: any) => ({ ...prev, autoPaste: !prev.autoPaste }));
-                  addToast(`Auto paste ${!settings.autoPaste ? 'enabled' : 'disabled'}`);
-                }}
-                className={`w-12 h-6 rounded-full p-1 transition-all duration-500 ${settings.autoPaste ? 'neo-gradient' : 'bg-white/10'}`}
-              >
-                <motion.div 
-                  animate={{ x: settings.autoPaste ? 24 : 0 }}
-                  className="w-4 h-4 rounded-full bg-white shadow-lg" 
-                />
-              </button>
-            </div>
-          </GlassCard>
-        </div>
+            </GlassCard>
+          </div>
 
         <div className="space-y-4">
           <h3 className="text-[10px] uppercase tracking-[0.3em] text-white/20 font-black px-2">Info & Legal</h3>
@@ -820,12 +820,18 @@ export default function App() {
                   </div>
                   <div>
                     <h1 className="text-2xl font-bold tracking-tight italic">{APP_NAME}</h1>
-                    <p className="text-[8px] font-black tracking-[0.4em] uppercase text-white/30">Next-Gen Downloader</p>
+                    <p className="text-[8px] font-black tracking-[0.4em] uppercase text-[var(--text-dim)]">Next-Gen Downloader</p>
                   </div>
                 </div>
-                <NeoButton variant="ghost" className="p-3 aspect-square !rounded-2xl glass">
-                  <Search className="w-5 h-5 text-white/60" />
-                </NeoButton>
+                <div className="flex items-center gap-2">
+                  <NeoButton 
+                    variant="ghost" 
+                    className="p-3 aspect-square !rounded-2xl glass"
+                    onClick={() => setActiveScreen('settings')}
+                  >
+                    <SettingsIcon className={`w-5 h-5 ${activeScreen === 'settings' ? 'text-neon-purple' : 'text-[var(--text-main)]/60'}`} />
+                  </NeoButton>
+                </div>
               </div>
             </header>
 
