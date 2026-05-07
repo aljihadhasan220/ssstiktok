@@ -21,31 +21,64 @@
 }
 
 :root {
-  background-color: #05010d;
-  color: #ffffff;
+  --neon-purple: #9d00ff;
+  --neon-blue: #00d4ff;
+  --neon-pink: #ff00ea;
+  --bg-color: #05010d;
+  --bg-glow-purple: rgba(157, 0, 255, 0.1);
+  --bg-glow-blue: rgba(0, 212, 255, 0.1);
+  --text-main: #ffffff;
+  --text-dim: rgba(255, 255, 255, 0.4);
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  
+  background-color: var(--bg-color);
+  color: var(--text-main);
   -webkit-font-smoothing: antialiased;
 }
 
-.glass {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+body.light {
+  --bg-color: #f8f9fa;
+  --bg-glow-purple: rgba(157, 0, 255, 0.05);
+  --bg-glow-blue: rgba(0, 212, 255, 0.05);
+  --text-main: #1a1a2e;
+  --text-dim: rgba(26, 26, 46, 0.4);
+  --glass-bg: rgba(0, 0, 0, 0.03);
+  --glass-border: rgba(0, 0, 0, 0.05);
 }
 
-.neon-border {
-  border: 1px solid transparent;
-  background-image: linear-gradient(#05010d, #05010d), linear-gradient(to right, #9d00ff, #00d4ff);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
+@theme {
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-neon-purple: var(--neon-purple);
+  --color-neon-blue: var(--neon-blue);
+  --color-neon-pink: var(--neon-pink);
+  
+  --animate-glow: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 10px -5px var(--color-neon-purple);
+  }
+  to {
+    box-shadow: 0 0 20px 2px var(--color-neon-purple);
+  }
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
 }
 
 .neo-gradient {
-  background: linear-gradient(135deg, #9d00ff 0%, #00d4ff 100%);
+  background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-blue) 100%);
 }
 
 .neo-text-gradient {
-  background: linear-gradient(135deg, #9d00ff 0%, #00d4ff 100%);
+  background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-blue) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

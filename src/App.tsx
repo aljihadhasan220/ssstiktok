@@ -56,7 +56,7 @@ const Toast = ({ message, type = 'success', onClose }: { message: string, type?:
 
 const NeoButton = ({ children, onClick, className = "", variant = "primary", disabled = false }: any) => {
   const variants: any = {
-    primary: "neo-gradient text-white shadow-[0_0_15px_-3px_#9d00ff]",
+    primary: "neo-gradient text-white shadow-[0_0_15px_-3px_var(--neon-purple)]",
     outline: "glass border-white/20 text-white hover:bg-white/5",
     ghost: "text-white/60 hover:text-white",
     danger: "bg-red-500/20 text-red-500 border border-red-500/30"
@@ -89,9 +89,7 @@ const GlassCard = ({ children, className = "" }: any) => (
 const Navbar = ({ active, setActive }: { active: Screen, setActive: (s: Screen) => void }) => {
   const items = [
     { id: 'home', icon: Home, label: 'Home' },
-    { id: 'downloads', icon: Download, label: 'History' },
-    { id: 'favorites', icon: Heart, label: 'Saved' },
-    { id: 'settings', icon: SettingsIcon, label: 'Setup' }
+    { id: 'downloads', icon: Download, label: 'History' }
   ];
 
   return (
@@ -135,7 +133,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void, key?: string }) => (
     animate={{ opacity: 0 }}
     transition={{ delay: 2.2, duration: 0.8 }}
     onAnimationComplete={onFinish}
-    className="fixed inset-0 z-[100] bg-[#05010d] flex flex-col items-center justify-center p-8 text-center"
+    className="fixed inset-0 z-[100] bg-[var(--bg-color)] flex flex-col items-center justify-center p-8 text-center"
   >
     <motion.div
       initial={{ scale: 0.8, opacity: 0 }}
@@ -143,7 +141,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void, key?: string }) => (
       transition={{ duration: 0.8, ease: "easeOut" }}
       className="relative"
     >
-      <div className="w-32 h-32 rounded-[36px] neo-gradient flex items-center justify-center shadow-[0_0_60px_-10px_#9d00ff]">
+      <div className="w-32 h-32 rounded-[36px] neo-gradient flex items-center justify-center shadow-[0_0_60px_-10px_var(--neon-purple)]">
         <Download className="text-white w-16 h-16" />
       </div>
       <motion.div 
@@ -173,11 +171,45 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void, key?: string }) => (
   </motion.div>
 );
 
-const HomeScreen = ({ addDownload, addToast }: { addDownload: (video: TikTokVideo, type: any) => void, addToast: (m: string, t?: any) => void }) => {
+const HomeScreen = ({ addDownload, addToast, settings }: { addDownload: (video: TikTokVideo, type: any) => void, addToast: (m: string, t?: any) => void, settings: AppSettings }) => {
   const [url, setUrl] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<TikTokVideo | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Auto Paste Logic
+  useEffect(() => {
+    if (settings.autoPaste) {
+      const checkClipboard = async () => {
+        try {
+          let text = '';
+          if (Capacitor.isNativePlatform()) {
+            const { value } = await Clipboard.read();
+            text = value;
+          } else {
+            // navigator.clipboard.readText() might require user interaction in some browsers
+            // so we handle it gracefully
+            const result = await navigator.permissions.query({ name: 'clipboard-read' as any });
+            if (result.state === 'granted' || result.state === 'prompt') {
+              text = await navigator.clipboard.readText();
+            }
+          }
+          
+          if (text && TikTokApiService.validateUrl(text) && text !== url) {
+            setUrl(text);
+            addToast("Link detected from clipboard");
+          }
+        } catch (e) {
+          // Fail silently for auto-paste
+        }
+      };
+
+      // Check on mount and when window gains focus
+      checkClipboard();
+      window.addEventListener('focus', checkClipboard);
+      return () => window.removeEventListener('focus', checkClipboard);
+    }
+  }, [settings.autoPaste]);
 
   const handlePaste = async () => {
     try {
@@ -350,7 +382,7 @@ const HomeScreen = ({ addDownload, addToast }: { addDownload: (video: TikTokVide
                   <div className="flex items-center gap-3">
                     <div className="relative">
                       <img src={result.author.avatar} className="w-10 h-10 rounded-full border-2 border-white/10" alt="avatar" />
-                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-neon-blue rounded-full flex items-center justify-center p-0.5 border-2 border-[#05010d]">
+                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-neon-blue rounded-full flex items-center justify-center p-0.5 border-2 border-[var(--bg-color)]">
                         <CheckCircle2 className="w-full h-full text-black" />
                       </div>
                     </div>
@@ -379,7 +411,7 @@ const HomeScreen = ({ addDownload, addToast }: { addDownload: (video: TikTokVide
                 <div className="group relative">
                   <div className="absolute -inset-0.5 neo-gradient rounded-[20px] blur opacity-40 group-hover:opacity-100 transition duration-1000"></div>
                   <NeoButton 
-                    className="w-full bg-[#05010d] !shadow-none py-4 border-none text-sm tracking-widest font-black"
+                    className="w-full bg-[var(--bg-color)] !shadow-none py-4 border-none text-sm tracking-widest font-black"
                     onClick={() => addDownload(result, 'hd')}
                   >
                     DOWNLOAD HD VIDEO
@@ -472,10 +504,32 @@ const DownloadsScreen = ({ tasks, removeTask }: { tasks: DownloadTask[], removeT
   </div>
 );
 
-const SettingsScreen = () => {
-  const [darkMode, setDarkMode] = useState(true);
-  const [autoPaste, setAutoPaste] = useState(true);
-  
+const SettingsScreen = ({ settings, setSettings, addToast, setShowFeedback }: { 
+  settings: AppSettings, 
+  setSettings: (s: any) => void, 
+  addToast: (m: string) => void,
+  setShowFeedback: (v: boolean) => void
+}) => {
+  const handleShare = async () => {
+    const shareData = {
+      title: APP_NAME,
+      text: 'Download TikTok videos without watermark for free!',
+      url: 'https://ssstiktok-psi.vercel.app/'
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        addToast("Sharing opened");
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+        addToast("App link copied to clipboard");
+      }
+    } catch (err) {
+      addToast("Sharing cancelled");
+    }
+  };
+
   return (
     <div className="p-4 space-y-8 pb-32">
       <div className="pt-8 px-2">
@@ -489,38 +543,58 @@ const SettingsScreen = () => {
           <GlassCard className="!p-0 overflow-hidden divide-y divide-white/5 border-white/5">
             <div className="flex items-center justify-between p-5">
               <div className="flex items-center gap-4">
-                <div className="w-11 h-11 rounded-2xl bg-neon-purple/20 flex items-center justify-center">
-                  <Moon className="w-5 h-5 text-neon-purple" />
+                <div className="w-11 h-11 rounded-2xl bg-neon-purple/20 flex items-center justify-center transition-colors">
+                  {settings.darkMode ? <Moon className="w-5 h-5 text-neon-purple" /> : <Sun className="w-5 h-5 text-neon-purple" />}
                 </div>
                 <div>
-                  <p className="text-sm font-bold tracking-tight">Dark Mode</p>
-                  <p className="text-[10px] text-white/30 uppercase font-medium">True OLED Black</p>
+                  <p className="text-sm font-bold tracking-tight">Theme Mode</p>
+                  <p className="text-[10px] text-white/30 uppercase font-medium">{settings.darkMode ? 'True OLED Dark' : 'Crystal Light'}</p>
                 </div>
               </div>
               <button 
-                onClick={() => setDarkMode(!darkMode)}
-                className={`w-12 h-6 rounded-full p-1 transition-all duration-500 ${darkMode ? 'neo-gradient' : 'bg-white/10'}`}
+                onClick={() => {
+                  setSettings((prev: any) => ({ ...prev, darkMode: !prev.darkMode }));
+                  addToast(`Theme switched to ${!settings.darkMode ? 'Dark' : 'Light'}`);
+                }}
+                className={`w-12 h-6 rounded-full p-1 transition-all duration-500 ${settings.darkMode ? 'neo-gradient' : 'bg-black/10 dark:bg-white/10'}`}
               >
                 <motion.div 
-                  animate={{ x: darkMode ? 24 : 0 }}
+                  animate={{ x: settings.darkMode ? 24 : 0 }}
                   className="w-4 h-4 rounded-full bg-white shadow-lg" 
                 />
               </button>
             </div>
             
-            <div className="flex items-center justify-between p-5">
-              <div className="flex items-center gap-4">
-                <div className="w-11 h-11 rounded-2xl bg-neon-blue/20 flex items-center justify-center">
-                  <Palette className="w-5 h-5 text-neon-blue" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold tracking-tight">Ui Palette</p>
-                  <p className="text-[10px] text-white/30 uppercase font-medium">Futuristic Neon</p>
+            <div className="flex flex-col p-5 gap-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-11 h-11 rounded-2xl bg-neon-blue/20 flex items-center justify-center">
+                    <Palette className="w-5 h-5 text-neon-blue" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold tracking-tight">Ui Palette</p>
+                    <p className="text-[10px] text-white/30 uppercase font-medium">Futuristic Neon</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <div className="w-6 h-6 rounded-full bg-neon-purple border-2 border-white/10" />
-                <div className="w-6 h-6 rounded-full bg-neon-blue border-4 border-[#05010d] shadow-lg scale-110" />
+              <div className="flex gap-3 px-2">
+                {PALETTES.map((p) => (
+                  <button
+                    key={p.name}
+                    onClick={() => {
+                      setSettings((prev: any) => ({ ...prev, palette: p }));
+                      addToast(`${p.name} palette applied`);
+                    }}
+                    className={`relative w-10 h-10 rounded-full border-2 transition-all p-0.5 ${
+                      settings.palette.name === p.name ? 'border-white scale-110 shadow-lg' : 'border-white/10'
+                    }`}
+                  >
+                    <div className="w-full h-full rounded-full overflow-hidden flex rotate-45">
+                      <div className="w-1/2 h-full" style={{ background: p.primary }} />
+                      <div className="w-1/2 h-full" style={{ background: p.secondary }} />
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
           </GlassCard>
@@ -540,11 +614,14 @@ const SettingsScreen = () => {
                 </div>
               </div>
                <button 
-                onClick={() => setAutoPaste(!autoPaste)}
-                className={`w-12 h-6 rounded-full p-1 transition-all duration-500 ${autoPaste ? 'neo-gradient' : 'bg-white/10'}`}
+                onClick={() => {
+                  setSettings((prev: any) => ({ ...prev, autoPaste: !prev.autoPaste }));
+                  addToast(`Auto paste ${!settings.autoPaste ? 'enabled' : 'disabled'}`);
+                }}
+                className={`w-12 h-6 rounded-full p-1 transition-all duration-500 ${settings.autoPaste ? 'neo-gradient' : 'bg-white/10'}`}
               >
                 <motion.div 
-                  animate={{ x: autoPaste ? 24 : 0 }}
+                  animate={{ x: settings.autoPaste ? 24 : 0 }}
                   className="w-4 h-4 rounded-full bg-white shadow-lg" 
                 />
               </button>
@@ -555,7 +632,7 @@ const SettingsScreen = () => {
         <div className="space-y-4">
           <h3 className="text-[10px] uppercase tracking-[0.3em] text-white/20 font-black px-2">Info & Legal</h3>
           <GlassCard className="!p-0 overflow-hidden divide-y divide-white/5 border-white/5">
-            <div className="flex items-center justify-between p-5 cursor-pointer hover:bg-white/5 transition-colors group">
+            <div onClick={handleShare} className="flex items-center justify-between p-5 cursor-pointer hover:bg-white/5 transition-colors group">
               <div className="flex items-center gap-4">
                 <div className="w-11 h-11 rounded-2xl bg-white/[0.03] flex items-center justify-center border border-white/5 group-hover:border-white/20 transition-all">
                   <Share2 className="w-5 h-5 text-white/60" />
@@ -564,7 +641,7 @@ const SettingsScreen = () => {
               </div>
               <ArrowRight className="w-4 h-4 text-white/20" />
             </div>
-            <div className="flex items-center justify-between p-5 cursor-pointer hover:bg-white/5 transition-colors group">
+            <div onClick={() => setShowFeedback(true)} className="flex items-center justify-between p-5 cursor-pointer hover:bg-white/5 transition-colors group">
               <div className="flex items-center gap-4">
                 <div className="w-11 h-11 rounded-2xl bg-white/[0.03] flex items-center justify-center border border-white/5 group-hover:border-white/20 transition-all">
                   <Star className="w-5 h-5 text-white/60" />
@@ -590,11 +667,30 @@ const SettingsScreen = () => {
 
 // --- App Root ---
 
+type AppSettings = {
+  darkMode: boolean;
+  autoPaste: boolean;
+  palette: { name: string, primary: string, secondary: string };
+};
+
+const PALETTES = [
+  { name: 'Default', primary: '#9d00ff', secondary: '#00d4ff' },
+  { name: 'Cyber', primary: '#ff00ea', secondary: '#ffea00' },
+  { name: 'Forest', primary: '#00ff88', secondary: '#00bcff' },
+  { name: 'Energy', primary: '#ff4d00', secondary: '#ffc400' }
+];
+
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeScreen, setActiveScreen] = useState<Screen>('home');
   const [tasks, setTasks] = useState<DownloadTask[]>([]);
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
+  const [settings, setSettings] = useState<AppSettings>({
+    darkMode: true,
+    autoPaste: true,
+    palette: PALETTES[0]
+  });
+  const [showFeedback, setShowFeedback] = useState(false);
 
   // Initialize from LocalStorage
   useEffect(() => {
@@ -602,8 +698,10 @@ export default function App() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        // We only restore completed tasks to keep UI clean
-        setTasks(parsed.downloads.filter((t: any) => t.status === 'completed'));
+        setTasks(parsed.downloads?.filter((t: any) => t.status === 'completed') || []);
+        if (parsed.settings) {
+          setSettings(prev => ({ ...prev, ...parsed.settings }));
+        }
       } catch (e) {
         console.error("Failed to load state", e);
       }
@@ -612,9 +710,25 @@ export default function App() {
 
   // Save to LocalStorage
   useEffect(() => {
-    const state = { downloads: tasks };
+    const state = { downloads: tasks, settings };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }, [tasks]);
+  }, [tasks, settings]);
+
+  // Handle Theme
+  useEffect(() => {
+    if (!settings.darkMode) {
+      document.body.classList.add('light');
+    } else {
+      document.body.classList.remove('light');
+    }
+  }, [settings.darkMode]);
+
+  // Handle Palette
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty('--neon-purple', settings.palette.primary);
+    root.style.setProperty('--neon-blue', settings.palette.secondary);
+  }, [settings.palette]);
 
   const addToast = (message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
@@ -663,7 +777,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#05010d] font-sans selection:bg-neon-purple/30 text-white">
+    <div className="min-h-screen relative overflow-hidden bg-[var(--bg-color)] font-sans selection:bg-neon-purple/30 text-[var(--text-main)] transition-colors duration-500">
       {/* Background Blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <motion.div 
@@ -674,7 +788,8 @@ export default function App() {
             y: [-100, 100, -100]
           }}
           transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-[20%] -left-[10%] w-[100vw] h-[100vw] rounded-full bg-neon-purple/10 blur-[140px]" 
+          style={{ background: 'var(--bg-glow-purple)' }}
+          className="absolute -top-[20%] -left-[10%] w-[100vw] h-[100vw] rounded-full blur-[140px]" 
         />
         <motion.div 
           animate={{ 
@@ -684,7 +799,8 @@ export default function App() {
             y: [200, -100, 200]
           }}
           transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-          className="absolute top-[30%] -right-[20%] w-[120vw] h-[120vw] rounded-full bg-neon-blue/10 blur-[160px]" 
+          style={{ background: 'var(--bg-glow-blue)' }}
+          className="absolute top-[30%] -right-[20%] w-[120vw] h-[120vw] rounded-full blur-[160px]" 
         />
       </div>
 
@@ -698,7 +814,7 @@ export default function App() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-11 h-11 rounded-2xl neo-gradient flex items-center justify-center p-0.5 shadow-2xl shadow-neon-purple/20">
-                    <div className="w-full h-full bg-[#05010d] rounded-2xl flex items-center justify-center">
+                    <div className="w-full h-full bg-[var(--bg-color)] rounded-2xl flex items-center justify-center">
                       <Download className="w-6 h-6 text-neon-blue" />
                     </div>
                   </div>
@@ -723,13 +839,64 @@ export default function App() {
                   exit={{ opacity: 0, x: -30, filter: 'blur(10px)' }}
                   transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  {activeScreen === 'home' && <HomeScreen addDownload={addDownloadTask} addToast={addToast} />}
+                  {activeScreen === 'home' && <HomeScreen addDownload={addDownloadTask} addToast={addToast} settings={settings} />}
                   {activeScreen === 'downloads' && <DownloadsScreen tasks={tasks} removeTask={removeTask} />}
                   {activeScreen === 'favorites' && <div className="p-20 text-center opacity-30 italic">Collection module loading...</div>}
-                  {activeScreen === 'settings' && <SettingsScreen />}
+                  {activeScreen === 'settings' && <SettingsScreen settings={settings} setSettings={setSettings} addToast={addToast} setShowFeedback={setShowFeedback} />}
                 </motion.div>
               </AnimatePresence>
             </main>
+
+            {/* Feedback Modal */}
+            <AnimatePresence>
+              {showFeedback && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 sm:p-0">
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => setShowFeedback(false)}
+                    className="absolute inset-0 bg-black/60 backdrop-blur-md"
+                  />
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                    className="relative w-full max-w-sm glass border-white/10 rounded-[32px] p-8 shadow-2xl overflow-hidden"
+                  >
+                    <div className="absolute top-0 right-0 p-4">
+                      <button onClick={() => setShowFeedback(false)} className="w-10 h-10 rounded-full flex items-center justify-center glass border-white/5 text-white/20 hover:text-white transition-colors">
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                    <div className="text-center space-y-6">
+                      <div className="w-20 h-20 rounded-3xl neo-gradient mx-auto flex items-center justify-center shadow-lg">
+                        <Heart className="w-10 h-10 text-white fill-white/20" />
+                      </div>
+                      <div className="space-y-2">
+                        <h3 className="text-2xl font-bold tracking-tight h-10 flex items-center justify-center">Love {APP_NAME}?</h3>
+                        <p className="text-white/40 text-sm leading-relaxed">Your feedback drives the evolution of our next-gen engine.</p>
+                      </div>
+                      <div className="space-y-3 pt-4">
+                        <textarea 
+                          placeholder="What can we improve?..."
+                          className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm focus:outline-none focus:border-neon-purple/50 min-h-[120px] resize-none"
+                        />
+                        <NeoButton 
+                          className="w-full py-4 text-sm font-bold tracking-widest"
+                          onClick={() => {
+                            setShowFeedback(false);
+                            addToast("Feedback sent! Thank you.");
+                          }}
+                        >
+                          TRANSMIT FEEDBACK
+                        </NeoButton>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+              )}
+            </AnimatePresence>
 
             {/* Navigation */}
             <Navbar active={activeScreen} setActive={setActiveScreen} />
