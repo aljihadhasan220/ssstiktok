@@ -260,21 +260,21 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
   };
 
   return (
-    <div className="flex flex-col gap-8 pb-32">
+    <div className="flex flex-col gap-8 pb-32 max-w-lg mx-auto">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="space-y-4"
+          className="space-y-4 text-center mt-8"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 glass rounded-full border-[var(--glass-border)] mb-4 animate-pulse">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 glass rounded-full border-[var(--glass-border)] mb-4 animate-pulse mx-auto">
             <ShieldCheck className="w-4 h-4 text-neon-blue" />
             <span className="text-[10px] font-bold tracking-widest uppercase text-[var(--text-dim)]">Secure & Watermark Free</span>
           </div>
-          <h2 className="text-[38px] sm:text-[42px] font-bold px-4 leading-[1.1] tracking-tight text-[var(--text-main)]">
+          <h2 className="text-[38px] sm:text-[42px] font-bold px-4 leading-[1.1] tracking-tight text-[var(--text-main)] text-center">
             TikTok Video <br />
             <span className="neo-text-gradient italic">Downloader</span>
           </h2>
-          <p className="text-[var(--text-dim)] text-sm max-w-[280px] mx-auto leading-relaxed">
+          <p className="text-[var(--text-dim)] text-sm max-w-[280px] mx-auto leading-relaxed text-center">
             Preserve your favorite moments in HD quality, instantly.
           </p>
         </motion.div>
