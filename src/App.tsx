@@ -127,50 +127,6 @@ const Navbar = ({ active, setActive }: { active: Screen, setActive: (s: Screen) 
 
 // --- Screens ---
 
-const SplashScreen = ({ onFinish }: { onFinish: () => void, key?: string }) => (
-  <motion.div 
-    initial={{ opacity: 1 }}
-    animate={{ opacity: 0 }}
-    transition={{ delay: 2.2, duration: 0.8 }}
-    onAnimationComplete={onFinish}
-    className="fixed inset-0 z-[100] bg-[var(--bg-color)] flex flex-col items-center justify-center p-8 text-center"
-  >
-    <motion.div
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      className="relative"
-    >
-      <div className="w-32 h-32 rounded-[36px] neo-gradient flex items-center justify-center shadow-[0_0_60px_-10px_var(--neon-purple)]">
-        <Download className="text-white w-16 h-16" />
-      </div>
-      <motion.div 
-        animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.1, 1] }}
-        transition={{ repeat: Infinity, duration: 2.5 }}
-        className="absolute -inset-6 neo-gradient rounded-[48px] blur-3xl -z-10"
-      />
-    </motion.div>
-    <motion.h1 
-      initial={{ y: 20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ delay: 0.4 }}
-      className="mt-10 text-4xl font-bold neo-text-gradient tracking-tight"
-    >
-      {APP_NAME}
-    </motion.h1>
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 0.4 }}
-      transition={{ delay: 0.8 }}
-      className="mt-4 flex items-center gap-2"
-    >
-      <div className="h-[1px] w-8 bg-white/40" />
-      <span className="text-[10px] font-bold tracking-[0.3em] uppercase">Premium Engine</span>
-      <div className="h-[1px] w-8 bg-white/40" />
-    </motion.div>
-  </motion.div>
-);
-
 const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzing }: { 
   addDownload: (video: TikTokVideo, type: any) => void, 
   addToast: (m: string, t?: any) => void, 
@@ -757,7 +713,6 @@ const PALETTES = [
 ];
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [activeScreen, setActiveScreen] = useState<Screen>('home');
   const [tasks, setTasks] = useState<DownloadTask[]>([]);
@@ -882,9 +837,6 @@ export default function App() {
       </div>
 
       <AnimatePresence mode="wait">
-        {isLoading ? (
-          <SplashScreen key="splash" onFinish={() => setIsLoading(false)} />
-        ) : (
           <div className="relative z-10 w-full max-w-lg mx-auto min-h-screen flex flex-col">
             {/* Header */}
             <header className="sticky top-0 z-40 p-4 pt-8 glass border-b-0 backdrop-blur-3xl bg-transparent">
@@ -1007,7 +959,6 @@ export default function App() {
               {toast && <Toast key="toast" message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
             </AnimatePresence>
           </div>
-        )}
       </AnimatePresence>
     </div>
   );
