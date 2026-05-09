@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Home, 
@@ -21,13 +21,17 @@ import {
   ExternalLink,
   ShieldCheck,
   RefreshCw,
-  AlertCircle
+  AlertCircle,
+  Globe
 } from 'lucide-react';
 import { Screen, TikTokVideo, DownloadTask, DownloadStatus } from './types.ts';
 import { TikTokApiService } from './services/apiService.ts';
 import { TikTokDownloaderService } from './services/downloaderService.ts';
 import { Clipboard } from '@capacitor/clipboard';
 import { Capacitor } from '@capacitor/core';
+import { BrowserRouter, Routes, Route, useParams, useNavigate, useLocation } from 'react-router-dom';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { SUPPORTED_LANGS, SEO_DATA, LangCode, SeoMetadata } from './lib/seo.ts';
 
 // --- Constants ---
 const APP_NAME = "SSSTikPro";
@@ -100,21 +104,21 @@ const FeatureCard = ({ icon: Icon, title, description }: any) => (
   </div>
 );
 
-const FeaturesSection = () => (
+const FeaturesSection = ({ features }: { features: SeoMetadata['features'] }) => (
   <section className="py-20 px-6 max-w-5xl mx-auto">
     <h2 className="text-3xl font-bold text-center mb-12 neo-text-gradient">Premium Features</h2>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <FeatureCard icon={ShieldCheck} title="No Watermark Downloads" description="Get clean videos without any distracting TikTok watermarks or logos." />
-      <FeatureCard icon={Zap} title="HD Video Quality" description="Download in original high definition resolution for the best viewing experience." />
-      <FeatureCard icon={RefreshCw} title="Fast Processing" description="Our high-speed engine processes your links in seconds, not minutes." />
-      <FeatureCard icon={Star} title="Unlimited Downloads" description="No daily limits. Save as many videos as your heart desires." />
-      <FeatureCard icon={Home} title="Mobile Friendly" description="Works perfectly on all devices. Use it on iOS, Android, or Desktop." />
-      <FeatureCard icon={CheckCircle2} title="Safe & Secure" description="No logins required. Your privacy and data are always protected." />
+      <FeatureCard icon={ShieldCheck} title={features[0].title} description={features[0].description} />
+      <FeatureCard icon={Zap} title={features[1].title} description={features[1].description} />
+      <FeatureCard icon={RefreshCw} title={features[2].title} description={features[2].description} />
+      <FeatureCard icon={Star} title={features[3].title} description={features[3].description} />
+      <FeatureCard icon={Home} title={features[4].title} description={features[4].description} />
+      <FeatureCard icon={CheckCircle2} title={features[5].title} description={features[5].description} />
     </div>
   </section>
 );
 
-const HowItWorks = () => (
+const HowItWorks = ({ content }: { content: SeoMetadata['howItWorks'] }) => (
   <section className="py-20 px-6 bg-white/[0.02]">
     <div className="max-w-4xl mx-auto">
       <h2 className="text-3xl font-bold text-center mb-16 neo-text-gradient">How It Works</h2>
@@ -122,26 +126,26 @@ const HowItWorks = () => (
         <div className="space-y-4">
           <div className="w-16 h-16 rounded-full glass border border-neon-purple/30 flex items-center justify-center mx-auto text-neon-purple text-2xl font-bold">1</div>
           <h3 className="text-xl font-bold">Copy TikTok Link</h3>
-          <p className="text-sm text-[var(--text-dim)]">Find the video you love and click the share button to copy the link.</p>
+          <p className="text-sm text-[var(--text-dim)]">{content.step1}</p>
         </div>
         <div className="space-y-4">
           <div className="w-16 h-16 rounded-full glass border border-neon-blue/30 flex items-center justify-center mx-auto text-neon-blue text-2xl font-bold">2</div>
           <h3 className="text-xl font-bold">Paste URL</h3>
-          <p className="text-sm text-[var(--text-dim)]">Open SSSTikPro and paste the link into the downloader above.</p>
+          <p className="text-sm text-[var(--text-dim)]">{content.step2}</p>
         </div>
         <div className="space-y-4">
           <div className="w-16 h-16 rounded-full glass border border-neon-pink/30 flex items-center justify-center mx-auto text-neon-pink text-2xl font-bold">3</div>
           <h3 className="text-xl font-bold">Download Instantly</h3>
-          <p className="text-sm text-[var(--text-dim)]">Press download and save your HD video without watermark instantly.</p>
+          <p className="text-sm text-[var(--text-dim)]">{content.step3}</p>
         </div>
       </div>
     </div>
   </section>
 );
 
-const WhyChoose = () => (
+const WhyChoose = ({ content }: { content: SeoMetadata['whyChoose'] }) => (
   <section className="py-20 px-6 max-w-4xl mx-auto">
-    <h2 className="text-3xl font-bold text-center mb-12 neo-text-gradient">Why Choose SSSTikPro</h2>
+    <h2 className="text-3xl font-bold text-center mb-12 neo-text-gradient">{content.title}</h2>
     <div className="glass rounded-[40px] p-10 border-white/5 space-y-8 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-32 h-32 neo-gradient opacity-5 blur-[80px] -mr-10 -mt-10" />
       <div className="flex items-start gap-6">
@@ -149,8 +153,8 @@ const WhyChoose = () => (
             <Zap className="w-6 h-6 text-neon-blue" />
           </div>
           <div>
-            <h4 className="text-lg font-bold mb-1">Faster than competitors</h4>
-            <p className="text-sm text-[var(--text-dim)]">Our optimized engine delivers results up to 3x faster than traditional tools.</p>
+            <h4 className="text-lg font-bold mb-1">{content.f1.t}</h4>
+            <p className="text-sm text-[var(--text-dim)]">{content.f1.d}</p>
           </div>
       </div>
       <div className="flex items-start gap-6">
@@ -158,8 +162,8 @@ const WhyChoose = () => (
             <Palette className="w-6 h-6 text-neon-purple" />
           </div>
           <div>
-            <h4 className="text-lg font-bold mb-1">Clean UI</h4>
-            <p className="text-sm text-[var(--text-dim)]">No annoying popups or confusing ads. Just a pure, premium design.</p>
+            <h4 className="text-lg font-bold mb-1">{content.f2.t}</h4>
+            <p className="text-sm text-[var(--text-dim)]">{content.f2.d}</p>
           </div>
       </div>
       <div className="flex items-start gap-6">
@@ -167,8 +171,8 @@ const WhyChoose = () => (
             <ShieldCheck className="w-6 h-6 text-neon-pink" />
           </div>
           <div>
-            <h4 className="text-lg font-bold mb-1">No login required</h4>
-            <p className="text-sm text-[var(--text-dim)]">We value your time. Download videos instantly without creating an account.</p>
+            <h4 className="text-lg font-bold mb-1">{content.f3.t}</h4>
+            <p className="text-sm text-[var(--text-dim)]">{content.f3.d}</p>
           </div>
       </div>
       <div className="flex items-start gap-6">
@@ -176,23 +180,16 @@ const WhyChoose = () => (
             <Star className="w-6 h-6 text-neon-blue" />
           </div>
           <div>
-            <h4 className="text-lg font-bold mb-1">Free forever</h4>
-            <p className="text-sm text-[var(--text-dim)]">Our premium service is available to everyone at zero cost, forever.</p>
+            <h4 className="text-lg font-bold mb-1">{content.f4.t}</h4>
+            <p className="text-sm text-[var(--text-dim)]">{content.f4.d}</p>
           </div>
       </div>
     </div>
   </section>
 );
 
-const FAQ = () => {
+const FAQ = ({ faqs }: { faqs: SeoMetadata['faq'] }) => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-  const faqs = [
-    { q: "How to download TikTok videos?", a: "Simply copy the TikTok video link, paste it into our input field at the top of the page, and click 'Download'." },
-    { q: "Is SSSTikPro free?", a: "Yes, our service is 100% free to use. We don't charge any fees for downloading TikTok videos." },
-    { q: "Is it safe?", a: "Absolutely. We don't require any login information and we don't store your personal data." },
-    { q: "Does it work on mobile?", a: "Yes, our website is fully responsive and works perfectly on all mobile devices and tablets." },
-    { q: "Can I download without watermark?", a: "Yes, SSSTikPro specializes in high-quality TikTok downloads without any watermarks." }
-  ];
 
   return (
     <section className="py-20 px-6 max-w-3xl mx-auto">
@@ -227,24 +224,24 @@ const FAQ = () => {
   );
 };
 
-const SEOContent = () => (
+const SEOContent = ({ content }: { content: SeoMetadata['seoContent'] }) => (
   <section className="py-20 px-6 max-w-4xl mx-auto opacity-70">
     <div className="space-y-12">
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold text-[var(--text-main)]">TikTok Video Downloader</h2>
-        <p className="text-sm leading-relaxed">SSSTikPro is your ultimate solution for downloading TikTok videos with ease. Our platform is designed to provide a seamless experience, allowing you to save your favorite TikTok content directly to your device without any hassle.</p>
+        <h2 className="text-2xl font-bold text-[var(--text-main)]">{content.h2}</h2>
+        <p className="text-sm leading-relaxed">{content.p1}</p>
       </div>
       <div className="space-y-4">
-        <h3 className="text-xl font-bold text-[var(--text-main)]">Download TikTok Videos Without Watermark</h3>
-        <p className="text-sm leading-relaxed">One of the most sought-after features of our TikTok downloader is the ability to remove watermarks. Whether you're a content creator looking to repurpose your videos or just a fan who wants a clean version of a clip, SSSTikPro delivers pristine video quality every time.</p>
+        <h3 className="text-xl font-bold text-[var(--text-main)]">{content.h3_1}</h3>
+        <p className="text-sm leading-relaxed">{content.p2}</p>
       </div>
       <div className="space-y-4">
-        <h3 className="text-xl font-bold text-[var(--text-main)]">HD TikTok Downloader</h3>
-        <p className="text-sm leading-relaxed">We understand that quality matters. That's why our downloader supports High Definition (HD) video saving. When you use SSSTikPro, you aren't just getting another copy of a video; you're getting the best possible version available on TikTok's servers.</p>
+        <h3 className="text-xl font-bold text-[var(--text-main)]">{content.h3_2}</h3>
+        <p className="text-sm leading-relaxed">{content.p3}</p>
       </div>
       <div className="space-y-4">
-        <h3 className="text-xl font-bold text-[var(--text-main)]">Fast TikTok MP4 Downloads</h3>
-        <p className="text-sm leading-relaxed">Time is valuable. Our optimized server engine ensures that your MP4 files are ready in the blink of an eye. With state-of-the-art processing and a clean interface, SSSTikPro stands out as the fastest TikTok downloader in the futuristic web arena.</p>
+        <h3 className="text-xl font-bold text-[var(--text-main)]">{content.h3_3}</h3>
+        <p className="text-sm leading-relaxed">{content.p4}</p>
       </div>
     </div>
   </section>
@@ -894,7 +891,62 @@ const PALETTES = [
   { name: 'Energy', primary: '#ff4d00', secondary: '#ffc400' }
 ];
 
-export default function App() {
+const LanguageSelector = () => {
+  const { lang } = useParams<{ lang?: string }>();
+  const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const currentLang = (lang && SUPPORTED_LANGS.includes(lang as any) ? lang : 'en') as LangCode;
+
+  return (
+    <div className="relative">
+      <NeoButton 
+        variant="ghost" 
+        className="!p-2.5 !rounded-xl glass border-white/5 flex items-center gap-2"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <Globe className="w-4 h-4 text-neon-blue" />
+        <span className="text-[10px] font-black uppercase tracking-widest">{currentLang}</span>
+      </NeoButton>
+
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              className="absolute right-0 mt-2 w-48 glass border-white/10 rounded-2xl p-2 z-50 grid grid-cols-3 gap-1 shadow-2xl h-48 overflow-y-auto"
+            >
+              {SUPPORTED_LANGS.map((l) => (
+                <button
+                  key={l}
+                  onClick={() => {
+                    navigate(l === 'en' ? '/' : `/${l}`);
+                    setIsOpen(false);
+                  }}
+                  className={`p-2 rounded-lg text-[10px] font-black uppercase transition-colors ${
+                    currentLang === l ? 'neo-gradient text-white' : 'hover:bg-white/5 text-[var(--text-dim)]'
+                  }`}
+                >
+                  {l}
+                </button>
+              ))}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+const MainApp = () => {
+  const { lang } = useParams<{ lang?: string }>();
+  const location = useLocation();
+  const currentLang = (lang && SUPPORTED_LANGS.includes(lang as any) ? lang : 'en') as LangCode;
+  const seo = SEO_DATA[currentLang];
+
   const [activeScreen, setActiveScreen] = useState<Screen>('home');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [tasks, setTasks] = useState<DownloadTask[]>([]);
@@ -905,6 +957,11 @@ export default function App() {
     palette: PALETTES[0]
   });
   const [showFeedback, setShowFeedback] = useState(false);
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   // Initialize from LocalStorage
   useEffect(() => {
@@ -985,12 +1042,55 @@ export default function App() {
     }
   };
 
-  const removeTask = (id: string) => {
-    setTasks(prev => prev.filter(t => t.id !== id));
-  };
+  const canonicalUrl = currentLang === 'en' ? 'https://ssstikpro.site' : `https://ssstikpro.site/${currentLang}`;
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-[var(--bg-color)] font-sans selection:bg-neon-purple/30 text-[var(--text-main)] transition-colors duration-500">
+      <Helmet>
+        <title>{seo.title}</title>
+        <meta name="description" content={seo.description} />
+        <meta name="keywords" content={seo.keywords} />
+        <link rel="canonical" href={canonicalUrl} />
+        
+        {/* Global Favicons & Icons */}
+        <link rel="icon" type="image/x-icon" href="https://ssstikpro.site/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="https://ssstikpro.site/favicon-32x32.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="https://ssstikpro.site/apple-touch-icon.png" />
+        
+        {/* Hreflang Tags */}
+        <link rel="alternate" hrefLang="x-default" href="https://ssstikpro.site" />
+        {SUPPORTED_LANGS.map(l => (
+          <link key={l} rel="alternate" hrefLang={l} href={`https://ssstikpro.site${l === 'en' ? '' : `/${l}`}`} />
+        ))}
+
+        {/* OG Tags */}
+        <meta property="og:title" content={seo.title} />
+        <meta property="og:description" content={seo.description} />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:type" content="website" />
+        
+        {/* Twitter Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seo.title} />
+        <meta name="twitter:description" content={seo.description} />
+
+        {/* Structured Data FAQ */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": seo.faq.map(f => ({
+              "@type": "Question",
+              "name": f.q,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": f.a
+              }
+            }))
+          })}
+        </script>
+      </Helmet>
+
       {/* Background Blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <motion.div 
@@ -1028,12 +1128,13 @@ export default function App() {
                       <Download className="w-6 h-6 text-neon-blue" />
                     </div>
                   </div>
-                  <div>
+                  <div className="hidden sm:block">
                     <h1 className="text-2xl font-bold tracking-tight italic">{APP_NAME}</h1>
                     <p className="text-[8px] font-black tracking-[0.4em] uppercase text-[var(--text-dim)]">Next-Gen Downloader</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
+                  <LanguageSelector />
                   <NeoButton 
                     variant="ghost" 
                     className="p-3 aspect-square !rounded-2xl glass"
@@ -1066,11 +1167,11 @@ export default function App() {
                     <ProcessingModal isOpen={isAnalyzing} />
                     
                     <div className="mt-20">
-                      <FeaturesSection />
-                      <HowItWorks />
-                      <WhyChoose />
-                      <FAQ />
-                      <SEOContent />
+                      <FeaturesSection features={seo.features} />
+                      <HowItWorks content={seo.howItWorks} />
+                      <WhyChoose content={seo.whyChoose} />
+                      <FAQ faqs={seo.faq} />
+                      <SEOContent content={seo.seoContent} />
                     </div>
                   </motion.div>
                 ) : (
@@ -1153,5 +1254,18 @@ export default function App() {
           </div>
       </AnimatePresence>
     </div>
+  );
+};
+
+export default function App() {
+  return (
+    <HelmetProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<MainApp />} />
+          <Route path="/:lang" element={<MainApp />} />
+        </Routes>
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }

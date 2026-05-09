@@ -1,9 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://ssstikpro.site/</loc>
-    <lastmod>2026-05-08</lastmod>
-    <changefreq>daily</changefreq>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ssstikpro.site/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://ssstikpro.site/"/>
+    <xhtml:link rel="alternate" hreflang="in" href="https://ssstikpro.site/in"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://ssstikpro.site/id"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://ssstikpro.site/vi"/>
+    <xhtml:link rel="alternate" hreflang="ja" href="https://ssstikpro.site/ja"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://ssstikpro.site/zh"/>
+    <xhtml:link rel="alternate" hreflang="th" href="https://ssstikpro.site/th"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://ssstikpro.site/de"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://ssstikpro.site/ar"/>
+    <xhtml:link rel="alternate" hreflang="ms" href="https://ssstikpro.site/ms"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://ssstikpro.site/pl"/>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://ssstikpro.site/cs"/>
     <priority>1.0</priority>
   </url>
+  <url><loc>https://ssstikpro.site/in</loc><priority>0.8</priority></url>
+  <url><loc>https://ssstikpro.site/id</loc><priority>0.8</priority></url>
+  <url><loc>https://ssstikpro.site/vi</loc><priority>0.8</priority></url>
+  <url><loc>https://ssstikpro.site/ja</loc><priority>0.8</priority></url>
+  <url><loc>https://ssstikpro.site/zh</loc><priority>0.8</priority></url>
+  <url><loc>https://ssstikpro.site/th</loc><priority>0.8</priority></url>
+  <url><loc>https://ssstikpro.site/de</loc><priority>0.8</priority></url>
+  <url><loc>https://ssstikpro.site/ar</loc><priority>0.8</priority></url>
+  <url><loc>https://ssstikpro.site/ms</loc><priority>0.8</priority></url>
+  <url><loc>https://ssstikpro.site/pl</loc><priority>0.8</priority></url>
+  <url><loc>https://ssstikpro.site/cs</loc><priority>0.8</priority></url>
 </urlset>
