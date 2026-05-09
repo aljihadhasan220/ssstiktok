@@ -30,7 +30,7 @@ import { Clipboard } from '@capacitor/clipboard';
 import { Capacitor } from '@capacitor/core';
 
 // --- Constants ---
-const APP_NAME = "SSSTikTok";
+const APP_NAME = "SSSTikPro";
 const STORAGE_KEY = 'ssstiktok_state_v1';
 
 // --- Components ---
@@ -86,46 +86,193 @@ const GlassCard = ({ children, className = "" }: any) => (
   </motion.div>
 );
 
-const Navbar = ({ active, setActive }: { active: Screen, setActive: (s: Screen) => void }) => {
-  const items = [
-    { id: 'home', icon: Home, label: 'Home' },
-    { id: 'downloads', icon: Download, label: 'History' }
+// --- Screens ---
+
+const FeatureCard = ({ icon: Icon, title, description }: any) => (
+  <div className="glass p-8 rounded-3xl border border-white/5 hover:border-neon-purple/30 group transition-all duration-500 hover:-translate-y-2">
+    <div className="w-12 h-12 rounded-2xl neo-gradient flex items-center justify-center p-0.5 mb-6 shadow-lg shadow-neon-purple/10">
+      <div className="w-full h-full bg-[var(--bg-color)] rounded-2xl flex items-center justify-center text-neon-blue">
+        <Icon className="w-6 h-6" />
+      </div>
+    </div>
+    <h3 className="text-xl font-bold mb-3 tracking-tight">{title}</h3>
+    <p className="text-sm text-[var(--text-dim)] leading-relaxed">{description}</p>
+  </div>
+);
+
+const FeaturesSection = () => (
+  <section className="py-20 px-6 max-w-5xl mx-auto">
+    <h2 className="text-3xl font-bold text-center mb-12 neo-text-gradient">Premium Features</h2>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <FeatureCard icon={ShieldCheck} title="No Watermark Downloads" description="Get clean videos without any distracting TikTok watermarks or logos." />
+      <FeatureCard icon={Zap} title="HD Video Quality" description="Download in original high definition resolution for the best viewing experience." />
+      <FeatureCard icon={RefreshCw} title="Fast Processing" description="Our high-speed engine processes your links in seconds, not minutes." />
+      <FeatureCard icon={Star} title="Unlimited Downloads" description="No daily limits. Save as many videos as your heart desires." />
+      <FeatureCard icon={Home} title="Mobile Friendly" description="Works perfectly on all devices. Use it on iOS, Android, or Desktop." />
+      <FeatureCard icon={CheckCircle2} title="Safe & Secure" description="No logins required. Your privacy and data are always protected." />
+    </div>
+  </section>
+);
+
+const HowItWorks = () => (
+  <section className="py-20 px-6 bg-white/[0.02]">
+    <div className="max-w-4xl mx-auto">
+      <h2 className="text-3xl font-bold text-center mb-16 neo-text-gradient">How It Works</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+        <div className="space-y-4">
+          <div className="w-16 h-16 rounded-full glass border border-neon-purple/30 flex items-center justify-center mx-auto text-neon-purple text-2xl font-bold">1</div>
+          <h3 className="text-xl font-bold">Copy TikTok Link</h3>
+          <p className="text-sm text-[var(--text-dim)]">Find the video you love and click the share button to copy the link.</p>
+        </div>
+        <div className="space-y-4">
+          <div className="w-16 h-16 rounded-full glass border border-neon-blue/30 flex items-center justify-center mx-auto text-neon-blue text-2xl font-bold">2</div>
+          <h3 className="text-xl font-bold">Paste URL</h3>
+          <p className="text-sm text-[var(--text-dim)]">Open SSSTikPro and paste the link into the downloader above.</p>
+        </div>
+        <div className="space-y-4">
+          <div className="w-16 h-16 rounded-full glass border border-neon-pink/30 flex items-center justify-center mx-auto text-neon-pink text-2xl font-bold">3</div>
+          <h3 className="text-xl font-bold">Download Instantly</h3>
+          <p className="text-sm text-[var(--text-dim)]">Press download and save your HD video without watermark instantly.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+const WhyChoose = () => (
+  <section className="py-20 px-6 max-w-4xl mx-auto">
+    <h2 className="text-3xl font-bold text-center mb-12 neo-text-gradient">Why Choose SSSTikPro</h2>
+    <div className="glass rounded-[40px] p-10 border-white/5 space-y-8 relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-32 h-32 neo-gradient opacity-5 blur-[80px] -mr-10 -mt-10" />
+      <div className="flex items-start gap-6">
+          <div className="w-12 h-12 rounded-2xl bg-neon-blue/10 flex items-center justify-center shrink-0">
+            <Zap className="w-6 h-6 text-neon-blue" />
+          </div>
+          <div>
+            <h4 className="text-lg font-bold mb-1">Faster than competitors</h4>
+            <p className="text-sm text-[var(--text-dim)]">Our optimized engine delivers results up to 3x faster than traditional tools.</p>
+          </div>
+      </div>
+      <div className="flex items-start gap-6">
+          <div className="w-12 h-12 rounded-2xl bg-neon-purple/10 flex items-center justify-center shrink-0">
+            <Palette className="w-6 h-6 text-neon-purple" />
+          </div>
+          <div>
+            <h4 className="text-lg font-bold mb-1">Clean UI</h4>
+            <p className="text-sm text-[var(--text-dim)]">No annoying popups or confusing ads. Just a pure, premium design.</p>
+          </div>
+      </div>
+      <div className="flex items-start gap-6">
+          <div className="w-12 h-12 rounded-2xl bg-neon-pink/10 flex items-center justify-center shrink-0">
+            <ShieldCheck className="w-6 h-6 text-neon-pink" />
+          </div>
+          <div>
+            <h4 className="text-lg font-bold mb-1">No login required</h4>
+            <p className="text-sm text-[var(--text-dim)]">We value your time. Download videos instantly without creating an account.</p>
+          </div>
+      </div>
+      <div className="flex items-start gap-6">
+          <div className="w-12 h-12 rounded-2xl bg-neon-blue/10 flex items-center justify-center shrink-0">
+            <Star className="w-6 h-6 text-neon-blue" />
+          </div>
+          <div>
+            <h4 className="text-lg font-bold mb-1">Free forever</h4>
+            <p className="text-sm text-[var(--text-dim)]">Our premium service is available to everyone at zero cost, forever.</p>
+          </div>
+      </div>
+    </div>
+  </section>
+);
+
+const FAQ = () => {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const faqs = [
+    { q: "How to download TikTok videos?", a: "Simply copy the TikTok video link, paste it into our input field at the top of the page, and click 'Download'." },
+    { q: "Is SSSTikPro free?", a: "Yes, our service is 100% free to use. We don't charge any fees for downloading TikTok videos." },
+    { q: "Is it safe?", a: "Absolutely. We don't require any login information and we don't store your personal data." },
+    { q: "Does it work on mobile?", a: "Yes, our website is fully responsive and works perfectly on all mobile devices and tablets." },
+    { q: "Can I download without watermark?", a: "Yes, SSSTikPro specializes in high-quality TikTok downloads without any watermarks." }
   ];
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-md">
-      <div className="glass rounded-[32px] p-2 flex items-center justify-around shadow-2xl border-white/5 backdrop-blur-3xl">
-        {items.map((item) => {
-          const isActive = active === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => setActive(item.id as Screen)}
-              className="relative flex flex-col items-center justify-center px-4 py-2 group whitespace-nowrap"
+    <section className="py-20 px-6 max-w-3xl mx-auto">
+      <h2 className="text-3xl font-bold text-center mb-12 neo-text-gradient">FAQ</h2>
+      <div className="space-y-4">
+        {faqs.map((faq, i) => (
+          <div key={i} className="glass rounded-2xl border border-white/5 overflow-hidden">
+            <button 
+              onClick={() => setOpenIndex(openIndex === i ? null : i)}
+              className="w-full p-6 text-left flex items-center justify-between hover:bg-white/5 transition-colors"
             >
-              <AnimatePresence>
-                {isActive && (
-                  <motion.div
-                    layoutId="nav-glow"
-                    className="absolute inset-[3px] neo-gradient rounded-2xl opacity-10 blur-md"
-                  />
-                )}
-              </AnimatePresence>
-              <item.icon 
-                className={`w-6 h-6 z-10 transition-all duration-300 ${isActive ? 'text-neon-blue scale-110' : 'text-[var(--text-dim)]'}`} 
-              />
-              <span className={`text-[10px] font-bold z-10 mt-1 uppercase tracking-wider transition-colors duration-300 ${isActive ? 'text-[var(--text-main)]' : 'text-[var(--text-dim)]'}`}>
-                {item.label}
-              </span>
+              <span className="font-bold text-base tracking-tight">{faq.q}</span>
+              <ArrowRight className={`w-5 h-5 transition-transform duration-300 text-neon-blue ${openIndex === i ? 'rotate-90' : ''}`} />
             </button>
-          );
-        })}
+            <AnimatePresence>
+              {openIndex === i && (
+                <motion.div 
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <div className="p-6 pt-0 text-sm text-[var(--text-dim)] leading-relaxed">{faq.a}</div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        ))}
       </div>
-    </div>
+    </section>
   );
 };
 
-// --- Screens ---
+const SEOContent = () => (
+  <section className="py-20 px-6 max-w-4xl mx-auto opacity-70">
+    <div className="space-y-12">
+      <div className="space-y-4">
+        <h2 className="text-2xl font-bold text-[var(--text-main)]">TikTok Video Downloader</h2>
+        <p className="text-sm leading-relaxed">SSSTikPro is your ultimate solution for downloading TikTok videos with ease. Our platform is designed to provide a seamless experience, allowing you to save your favorite TikTok content directly to your device without any hassle.</p>
+      </div>
+      <div className="space-y-4">
+        <h3 className="text-xl font-bold text-[var(--text-main)]">Download TikTok Videos Without Watermark</h3>
+        <p className="text-sm leading-relaxed">One of the most sought-after features of our TikTok downloader is the ability to remove watermarks. Whether you're a content creator looking to repurpose your videos or just a fan who wants a clean version of a clip, SSSTikPro delivers pristine video quality every time.</p>
+      </div>
+      <div className="space-y-4">
+        <h3 className="text-xl font-bold text-[var(--text-main)]">HD TikTok Downloader</h3>
+        <p className="text-sm leading-relaxed">We understand that quality matters. That's why our downloader supports High Definition (HD) video saving. When you use SSSTikPro, you aren't just getting another copy of a video; you're getting the best possible version available on TikTok's servers.</p>
+      </div>
+      <div className="space-y-4">
+        <h3 className="text-xl font-bold text-[var(--text-main)]">Fast TikTok MP4 Downloads</h3>
+        <p className="text-sm leading-relaxed">Time is valuable. Our optimized server engine ensures that your MP4 files are ready in the blink of an eye. With state-of-the-art processing and a clean interface, SSSTikPro stands out as the fastest TikTok downloader in the futuristic web arena.</p>
+      </div>
+    </div>
+  </section>
+);
+
+const Footer = () => (
+  <footer className="py-16 px-6 border-t border-white/5 bg-black/20">
+    <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-2xl neo-gradient flex items-center justify-center p-0.5">
+          <div className="w-full h-full bg-[#0a0a0b] rounded-2xl flex items-center justify-center">
+            <Download className="w-5 h-5 text-neon-blue" />
+          </div>
+        </div>
+        <span className="text-xl font-bold italic tracking-tighter">SSSTikPro</span>
+      </div>
+      <div className="flex flex-wrap justify-center gap-x-12 gap-y-4 text-[11px] font-black tracking-[0.2em] uppercase text-[var(--text-dim)]">
+        <a href="#" className="hover:text-neon-blue transition-colors">About</a>
+        <a href="#" className="hover:text-neon-blue transition-colors">Privacy Policy</a>
+        <a href="#" className="hover:text-neon-blue transition-colors">Terms</a>
+        <a href="#" className="hover:text-neon-blue transition-colors">Contact</a>
+      </div>
+      <p className="text-[10px] text-[var(--text-dim)] uppercase tracking-[0.3em] font-black">
+        &copy; 2026 SSSTikPro. <span className="hidden sm:inline">All rights reserved.</span>
+      </p>
+    </div>
+  </footer>
+);
 
 const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzing }: { 
   addDownload: (video: TikTokVideo, type: any) => void, 
@@ -216,7 +363,7 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
   };
 
   return (
-    <div className="flex flex-col gap-8 pb-32 max-w-lg mx-auto">
+    <div className="flex flex-col gap-8 max-w-lg mx-auto">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -450,253 +597,6 @@ const ProcessingModal = ({ isOpen }: { isOpen: boolean }) => (
   </AnimatePresence>
 );
 
-const DownloadsScreen = ({ tasks, removeTask, addToast }: { 
-  tasks: DownloadTask[], 
-  removeTask: (id: string) => void,
-  addToast: (m: string, t?: any) => void
-}) => {
-  const handleOpenFile = async (task: DownloadTask) => {
-    try {
-      await TikTokDownloaderService.openFile(task);
-    } catch (e: any) {
-      addToast(e.message, 'error');
-    }
-  };
-
-  return (
-    <div className="p-4 space-y-6 pb-32">
-        <div className="flex items-center justify-between pt-8 px-2">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-[var(--text-main)]">Downloads</h2>
-          <p className="text-xs text-[var(--text-dim)] uppercase tracking-[0.2em] font-medium mt-1">Processed Files</p>
-        </div>
-        <NeoButton variant="ghost" className="p-2 px-3 text-[10px] font-black tracking-widest uppercase opacity-40 hover:opacity-100" onClick={() => tasks.forEach(t => removeTask(t.id))}>
-          Clear List
-        </NeoButton>
-      </div>
-      
-      <div className="space-y-4">
-        {tasks.length === 0 ? (
-          <div className="py-20 flex flex-col items-center opacity-20 text-[var(--text-main)]">
-            <Download className="w-16 h-16 stroke-[1]" />
-            <p className="mt-4 text-sm font-medium">No active or past downloads</p>
-          </div>
-        ) : (
-          tasks.sort((a,b) => b.timestamp - a.timestamp).map((task) => (
-            <GlassCard key={task.id} className="!p-4 border-[var(--glass-border)] group">
-              <div className="flex gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-[var(--glass-bg)] flex-shrink-0 flex items-center justify-center border border-[var(--glass-border)] overflow-hidden">
-                  <img src={task.video.thumbnail} className="w-full h-full object-cover opacity-40 group-hover:opacity-100 transition-opacity" />
-                </div>
-                <div className="flex-1 min-w-0 flex flex-col justify-center">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-bold truncate uppercase tracking-wider text-[var(--text-main)]">{task.video.id}_{task.type}.{task.type === 'mp3' ? 'mp3' : 'mp4'}</h3>
-                    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded uppercase ${task.status === 'completed' ? 'text-green-400' : 'text-neon-blue'}`}>
-                      {task.status}
-                    </span>
-                  </div>
-                  <p className="text-[10px] text-[var(--text-dim)] mt-1 uppercase font-bold tracking-tighter">
-                    {task.video.fileSize || '12.4 MB'} • {new Date(task.timestamp).toLocaleDateString()}
-                  </p>
-                  
-                  {task.status === 'downloading' && (
-                    <div className="w-full bg-[var(--glass-bg)] h-1.5 rounded-full mt-3 overflow-hidden">
-                      <motion.div 
-                        initial={{ width: 0 }}
-                        animate={{ width: `${task.progress}%` }}
-                        className="h-full neo-gradient" 
-                      />
-                    </div>
-                  )}
-
-                  {task.status === 'completed' && (
-                    <div className="mt-3 flex gap-2">
-                       <NeoButton 
-                        variant="ghost" 
-                        className="!py-1 !px-3 text-[9px] font-black tracking-widest glass !rounded-lg border-white/5"
-                        onClick={() => handleOpenFile(task)}
-                      >
-                        OPEN FILE
-                      </NeoButton>
-                    </div>
-                  )}
-                </div>
-                <button 
-                  onClick={() => removeTask(task.id)}
-                  className="self-center p-2 text-[var(--text-dim)] hover:text-red-400 transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            </GlassCard>
-          ))
-        )}
-      </div>
-    </div>
-  );
-};
-
-const SettingsScreen = ({ settings, setSettings, addToast, setShowFeedback }: { 
-  settings: AppSettings, 
-  setSettings: (s: any) => void, 
-  addToast: (m: string) => void,
-  setShowFeedback: (v: boolean) => void
-}) => {
-  const handleShare = async () => {
-    const shareData = {
-      title: APP_NAME,
-      text: 'Download TikTok videos without watermark for free!',
-      url: 'https://ssstiktok-psi.vercel.app/'
-    };
-
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-        addToast("Sharing opened");
-      } else {
-        await navigator.clipboard.writeText(shareData.url);
-        addToast("App link copied to clipboard");
-      }
-    } catch (err) {
-      addToast("Sharing cancelled");
-    }
-  };
-
-  return (
-    <div className="p-4 space-y-8 pb-32">
-      <div className="pt-8 px-2">
-        <h2 className="text-2xl font-bold tracking-tight">App Settings</h2>
-        <p className="text-xs text-white/30 uppercase tracking-[0.2em] font-medium mt-1">Configure {APP_NAME}</p>
-      </div>
-
-      <div className="space-y-8">
-          <div className="space-y-4">
-            <h3 className="text-[10px] uppercase tracking-[0.3em] text-[var(--text-dim)] font-black px-2">Visual Engine</h3>
-            <GlassCard className="!p-0 overflow-hidden divide-y divide-white/5 border-white/5">
-              <div className="flex items-center justify-between p-5">
-                <div className="flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-2xl bg-neon-purple/20 flex items-center justify-center transition-colors">
-                    {settings.darkMode ? <Moon className="w-5 h-5 text-neon-purple" /> : <Sun className="w-5 h-5 text-neon-purple" />}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold tracking-tight">Theme Mode</p>
-                    <p className="text-[10px] text-[var(--text-dim)] uppercase font-medium">{settings.darkMode ? 'True OLED Dark' : 'Crystal Light'}</p>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => {
-                    setSettings((prev: any) => ({ ...prev, darkMode: !prev.darkMode }));
-                    addToast(`Theme: ${!settings.darkMode ? 'Dark' : 'Light'}`);
-                  }}
-                  className={`w-12 h-6 rounded-full p-1 transition-all duration-500 ${settings.darkMode ? 'neo-gradient' : 'bg-black/10 dark:bg-white/10'}`}
-                >
-                  <motion.div 
-                    animate={{ x: settings.darkMode ? 24 : 0 }}
-                    className="w-4 h-4 rounded-full bg-white shadow-lg" 
-                  />
-                </button>
-              </div>
-              
-              <div className="flex flex-col p-5 gap-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-11 h-11 rounded-2xl bg-neon-blue/20 flex items-center justify-center">
-                      <Palette className="w-5 h-5 text-neon-blue" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-bold tracking-tight">Ui Palette</p>
-                      <p className="text-[10px] text-[var(--text-dim)] uppercase font-medium">Futuristic Neon</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-3 px-2">
-                  {PALETTES.map((p) => (
-                    <button
-                      key={p.name}
-                      onClick={() => {
-                        setSettings((prev: any) => ({ ...prev, palette: p }));
-                        addToast(`${p.name} palette applied`);
-                      }}
-                      className={`relative w-10 h-10 rounded-full border-2 transition-all p-0.5 ${
-                        settings.palette.name === p.name ? 'border-[var(--text-main)] scale-110 shadow-lg' : 'border-white/10'
-                      }`}
-                    >
-                      <div className="w-full h-full rounded-full overflow-hidden flex rotate-45">
-                        <div className="w-1/2 h-full" style={{ background: p.primary }} />
-                        <div className="w-1/2 h-full" style={{ background: p.secondary }} />
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </GlassCard>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-[10px] uppercase tracking-[0.3em] text-[var(--text-dim)] font-black px-2">Automation</h3>
-            <GlassCard className="!p-0 overflow-hidden border-white/5">
-               <div className="flex items-center justify-between p-5">
-                <div className="flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-2xl bg-white/5 flex items-center justify-center">
-                    <ClipboardIcon className="w-5 h-5 text-[var(--text-main)]/60" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold tracking-tight">Auto Paste</p>
-                    <p className="text-[10px] text-[var(--text-dim)] uppercase font-medium">Link detection</p>
-                  </div>
-                </div>
-                 <button 
-                  onClick={() => {
-                    setSettings((prev: any) => ({ ...prev, autoPaste: !prev.autoPaste }));
-                    addToast(`Auto paste ${!settings.autoPaste ? 'enabled' : 'disabled'}`);
-                  }}
-                  className={`w-12 h-6 rounded-full p-1 transition-all duration-500 ${settings.autoPaste ? 'neo-gradient' : 'bg-white/10'}`}
-                >
-                  <motion.div 
-                    animate={{ x: settings.autoPaste ? 24 : 0 }}
-                    className="w-4 h-4 rounded-full bg-white shadow-lg" 
-                  />
-                </button>
-              </div>
-            </GlassCard>
-          </div>
-
-        <div className="space-y-4">
-          <h3 className="text-[10px] uppercase tracking-[0.3em] text-white/20 font-black px-2">Info & Legal</h3>
-          <GlassCard className="!p-0 overflow-hidden divide-y divide-white/5 border-white/5">
-            <div onClick={handleShare} className="flex items-center justify-between p-5 cursor-pointer hover:bg-white/5 transition-colors group">
-              <div className="flex items-center gap-4">
-                <div className="w-11 h-11 rounded-2xl bg-white/[0.03] flex items-center justify-center border border-white/5 group-hover:border-white/20 transition-all">
-                  <Share2 className="w-5 h-5 text-white/60" />
-                </div>
-                <p className="text-sm font-bold tracking-tight">Spread the word</p>
-              </div>
-              <ArrowRight className="w-4 h-4 text-white/20" />
-            </div>
-            <div onClick={() => setShowFeedback(true)} className="flex items-center justify-between p-5 cursor-pointer hover:bg-white/5 transition-colors group">
-              <div className="flex items-center gap-4">
-                <div className="w-11 h-11 rounded-2xl bg-white/[0.03] flex items-center justify-center border border-white/5 group-hover:border-white/20 transition-all">
-                  <Star className="w-5 h-5 text-white/60" />
-                </div>
-                <p className="text-sm font-bold tracking-tight">Give feedback</p>
-              </div>
-              <ArrowRight className="w-4 h-4 text-white/20" />
-            </div>
-          </GlassCard>
-        </div>
-
-        <div className="text-center py-6 opacity-30">
-          <div className="inline-flex items-center gap-2 mb-2">
-            <ShieldCheck className="w-4 h-4" />
-            <p className="text-[10px] font-black tracking-[0.3em] uppercase">SSSTikTok Core v4.1.0</p>
-          </div>
-          <p className="text-[8px] uppercase tracking-widest italic">Designed in Neo-Tokyo for the Global Future</p>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 // --- App Root ---
 
 type AppSettings = {
@@ -714,7 +614,6 @@ const PALETTES = [
 
 export default function App() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [activeScreen, setActiveScreen] = useState<Screen>('home');
   const [tasks, setTasks] = useState<DownloadTask[]>([]);
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [settings, setSettings] = useState<AppSettings>({
@@ -780,7 +679,6 @@ export default function App() {
     };
 
     setTasks(prev => [...prev, newTask]);
-    setActiveScreen('downloads');
 
     try {
       await TikTokDownloaderService.downloadFile(
@@ -837,10 +735,10 @@ export default function App() {
       </div>
 
       <AnimatePresence mode="wait">
-          <div className="relative z-10 w-full max-w-lg mx-auto min-h-screen flex flex-col">
+          <div className="relative z-10 w-full min-h-screen flex flex-col">
             {/* Header */}
             <header className="sticky top-0 z-40 p-4 pt-8 glass border-b-0 backdrop-blur-3xl bg-transparent">
-              <div className="flex items-center justify-between">
+              <div className="max-w-6xl mx-auto flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className="w-11 h-11 rounded-2xl neo-gradient flex items-center justify-center p-0.5 shadow-2xl shadow-neon-purple/20">
                     <div className="w-full h-full bg-[var(--bg-color)] rounded-2xl flex items-center justify-center">
@@ -856,48 +754,33 @@ export default function App() {
                   <NeoButton 
                     variant="ghost" 
                     className="p-3 aspect-square !rounded-2xl glass"
-                    onClick={() => setActiveScreen('settings')}
+                    onClick={() => setShowFeedback(true)}
                   >
-                    <SettingsIcon className={`w-5 h-5 ${activeScreen === 'settings' ? 'text-neon-purple' : 'text-[var(--text-main)]/60'}`} />
+                    <Star className="w-5 h-5 text-neon-blue" />
                   </NeoButton>
                 </div>
               </div>
             </header>
 
             {/* Content Container */}
-            <main className="flex-1 overflow-x-hidden">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeScreen}
-                  initial={{ opacity: 0, x: 30, filter: 'blur(10px)' }}
-                  animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, x: -30, filter: 'blur(10px)' }}
-                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  {activeScreen === 'home' && (
-                    <>
-                      <HomeScreen 
-                        addDownload={addDownloadTask} 
-                        addToast={addToast} 
-                        settings={settings} 
-                        isAnalyzing={isAnalyzing}
-                        setIsAnalyzing={setIsAnalyzing}
-                      />
-                      <ProcessingModal isOpen={isAnalyzing} />
-                    </>
-                  )}
-                  {activeScreen === 'downloads' && <DownloadsScreen tasks={tasks} removeTask={removeTask} addToast={addToast} />}
-                  {activeScreen === 'favorites' && (
-                    <div className="py-20 flex flex-col items-center justify-center gap-6 opacity-30 text-center">
-                      <div className="w-16 h-16 rounded-2xl neo-gradient flex items-center justify-center animate-pulse">
-                        <Heart className="w-8 h-8 text-white" />
-                      </div>
-                      <p className="text-sm font-bold tracking-widest uppercase italic">Collection Module Online Soon</p>
-                    </div>
-                  )}
-                  {activeScreen === 'settings' && <SettingsScreen settings={settings} setSettings={setSettings} addToast={addToast} setShowFeedback={setShowFeedback} />}
-                </motion.div>
-              </AnimatePresence>
+            <main className="flex-1">
+              <HomeScreen 
+                addDownload={addDownloadTask} 
+                addToast={addToast} 
+                settings={settings} 
+                isAnalyzing={isAnalyzing}
+                setIsAnalyzing={setIsAnalyzing}
+              />
+              <ProcessingModal isOpen={isAnalyzing} />
+              
+              <div className="mt-20">
+                <FeaturesSection />
+                <HowItWorks />
+                <WhyChoose />
+                <FAQ />
+                <SEOContent />
+                <Footer />
+              </div>
             </main>
 
             {/* Feedback Modal */}
@@ -950,9 +833,6 @@ export default function App() {
                 </div>
               )}
             </AnimatePresence>
-
-            {/* Navigation */}
-            <Navbar active={activeScreen} setActive={setActiveScreen} />
 
             {/* Toast System */}
             <AnimatePresence>
