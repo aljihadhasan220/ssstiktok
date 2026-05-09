@@ -371,9 +371,38 @@ const ContactPage = ({ onBack }: { onBack: () => void }) => (
 const SettingsScreen = ({ settings, setSettings, addToast, onBack }: { 
   settings: AppSettings, 
   setSettings: (s: any) => void, 
-  addToast: (m: string) => void,
+  addToast: (m: string, t?: 'success' | 'error') => void,
   onBack: () => void
 }) => {
+  const handleShare = async () => {
+    const shareData = {
+      title: 'SSSTikPro - TikTok Video Downloader',
+      text: 'Download TikTok videos without watermark in HD quality using SSSTikPro.',
+      url: 'https://ssstikpro.site'
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        throw new Error('Share not supported');
+      }
+    } catch (err) {
+      if ((err as Error).name !== 'AbortError') {
+        try {
+          if (Capacitor.isNativePlatform()) {
+            await Clipboard.write({ string: shareData.url });
+          } else {
+            await navigator.clipboard.writeText(shareData.url);
+          }
+          addToast("Link copied successfully");
+        } catch (copyErr) {
+          addToast("Failed to copy link", 'error');
+        }
+      }
+    }
+  };
+
   return (
     <PageWrapper title="App Settings" onBack={onBack}>
       <div className="space-y-12">
@@ -464,6 +493,29 @@ const SettingsScreen = ({ settings, setSettings, addToast, onBack }: {
                     className="w-5 h-5 rounded-full bg-white shadow-lg" 
                   />
                 </button>
+              </div>
+            </GlassCard>
+          </div>
+
+          <div className="space-y-6">
+            <h3 className="text-[10px] uppercase tracking-[0.3em] text-[var(--text-dim)] font-black px-2">Sharing</h3>
+            <GlassCard className="!p-0 overflow-hidden border-white/5 bg-transparent">
+              <div className="flex items-center justify-between p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-neon-blue/20 flex items-center justify-center">
+                    <Share2 className="w-6 h-6 text-neon-blue" />
+                  </div>
+                  <div>
+                    <p className="text-base font-bold text-[var(--text-main)]">Share App</p>
+                    <p className="text-[10px] text-[var(--text-dim)] uppercase font-bold tracking-wider">SHARE SSSTIKPRO WITH FRIENDS</p>
+                  </div>
+                </div>
+                <NeoButton 
+                  className="!py-2 !px-4 !rounded-xl text-[10px] font-black tracking-widest uppercase"
+                  onClick={handleShare}
+                >
+                  Share Now
+                </NeoButton>
               </div>
             </GlassCard>
           </div>

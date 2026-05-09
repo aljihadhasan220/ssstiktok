@@ -1,24 +1,22 @@
 {
-  "name": "SSSTikTok",
-  "short_name": "SSSTikTok",
-  "description": "Premium TikTok video downloader without watermark. HD quality and fast downloads.",
+  "name": "SSSTikPro",
+  "short_name": "SSSTikPro",
+  "description": "Download TikTok videos without watermark in HD quality using SSSTikPro. Fast, free, secure, and mobile-friendly TikTok video downloader online.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0014",
-  "theme_color": "#7b2ff7",
+  "background_color": "#0b061f",
+  "theme_color": "#0b061f",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/icon.svg",
-      "type": "image/svg+xml",
-      "sizes": "512x512",
-      "purpose": "any maskable"
+      "src": "https://ssstikpro.site/android-chrome-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
     },
     {
-      "src": "/icon.svg",
-      "type": "image/svg+xml",
-      "sizes": "192x192",
-      "purpose": "any maskable"
+      "src": "https://ssstikpro.site/android-chrome-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
   ]
 }

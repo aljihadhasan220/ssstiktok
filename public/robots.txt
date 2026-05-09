@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://ssstiktok-psi.vercel.app/sitemap.xml
+Sitemap: https://ssstikpro.site/sitemap.xml
