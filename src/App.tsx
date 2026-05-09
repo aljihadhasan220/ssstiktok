@@ -250,10 +250,128 @@ const SEOContent = () => (
   </section>
 );
 
-const Footer = () => (
+const PageWrapper = ({ title, children, onBack }: { title: string, children: React.ReactNode, onBack: () => void }) => (
+  <motion.div 
+    initial={{ opacity: 0, x: 20 }}
+    animate={{ opacity: 1, x: 0 }}
+    exit={{ opacity: 0, x: -20 }}
+    className="py-12 px-6 max-w-4xl mx-auto w-full"
+  >
+    <div className="flex items-center gap-4 mb-10">
+      <NeoButton variant="ghost" className="!p-3 !rounded-2xl glass border-white/5" onClick={onBack}>
+        <ArrowRight className="w-5 h-5 rotate-180" />
+      </NeoButton>
+      <h2 className="text-3xl font-bold neo-text-gradient">{title}</h2>
+    </div>
+
+    <GlassCard className="border-white/5 bg-white/[0.03] !p-8 md:!p-12 prose prose-invert max-w-none prose-sm sm:prose-base leading-relaxed text-[var(--text-dim)]">
+      {children}
+    </GlassCard>
+
+    <div className="mt-12 text-center">
+      <NeoButton className="mx-auto" onClick={onBack}>
+        <Home className="w-5 h-5" />
+        <span>Back to Home</span>
+      </NeoButton>
+    </div>
+  </motion.div>
+);
+
+const AboutPage = ({ onBack }: { onBack: () => void }) => (
+  <PageWrapper title="About SSSTikPro" onBack={onBack}>
+    <div className="space-y-6">
+      <p className="text-lg text-[var(--text-main)] font-semibold">SSSTikPro is a next-generation TikTok downloader designed for the futuristic web.</p>
+      <p>We provide a premium, fast, and secure way to preserve your favorite moments from TikTok without any distracting watermarks or advertisements.</p>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+        <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
+          <h4 className="text-neon-blue font-bold mb-2">HD Quality</h4>
+          <p className="text-xs">Download in original high definition resolution directly from TikTok servers.</p>
+        </div>
+        <div className="p-6 rounded-2xl bg-white/5 border border-white/5">
+          <h4 className="text-neon-purple font-bold mb-2">No Watermark</h4>
+          <p className="text-xs">Our advanced engine strips all platform watermarks for a clean viewing experience.</p>
+        </div>
+      </div>
+
+      <p>Our goal is to offer a seamless experience across all platforms, whether you're on a mobile device, tablet, or desktop. No login, no hidden fees, just pure functionality wrapped in a beautiful futuristic design.</p>
+    </div>
+  </PageWrapper>
+);
+
+const PrivacyPage = ({ onBack }: { onBack: () => void }) => (
+  <PageWrapper title="Privacy Policy" onBack={onBack}>
+    <div className="space-y-6">
+      <p>At SSSTikPro, we take your privacy very seriously. This policy outlines our commitment to protecting your data while you use our services.</p>
+      
+      <h4 className="text-[var(--text-main)] font-bold text-lg">No Video Storage</h4>
+      <p>We do not store any videos you download on our servers. All video processing happens in real-time and the files are served directly from sources to your device.</p>
+
+      <h4 className="text-[var(--text-main)] font-bold text-lg">No Login Required</h4>
+      <p>You can use all features of SSSTikPro without needing to create an account or provide any personal information like email, phone number, or social media handles.</p>
+
+      <h4 className="text-[var(--text-main)] font-bold text-lg">Cookies Usage</h4>
+      <p>We use minimal cookies solely to remember your UI preferences (like Dark/Light mode and accent colors) locally on your device using browser local storage. We do not track your browsing habits or sell your data to third parties.</p>
+
+      <h4 className="text-[var(--text-main)] font-bold text-lg">Data Encryption</h4>
+      <p>All connections to SSSTikPro are secured using industry-standard SSL encryption, ensuring your interactions with our downloader are private and safe.</p>
+    </div>
+  </PageWrapper>
+);
+
+const TermsPage = ({ onBack }: { onBack: () => void }) => (
+  <PageWrapper title="Terms & Conditions" onBack={onBack}>
+    <div className="space-y-6">
+      <p>By using SSSTikPro, you agree to comply with the following terms and conditions. Please read them carefully.</p>
+
+      <h4 className="text-[var(--text-main)] font-bold text-lg">Fair Usage Policy</h4>
+      <p>SSSTikPro is intended for personal, non-commercial use. Users are prohibited from using the service for automated scraping, bulk downloading, or any activity that places unreasonable load on our infrastructure.</p>
+
+      <h4 className="text-[var(--text-main)] font-bold text-lg">Copyright Notice</h4>
+      <p>Users are responsible for ensuring they have the right to download and use the content they obtain through SSSTikPro. We do not host any content and are merely a technical intermediary. Respect the original creators' rights and follow regional copyright laws.</p>
+
+      <h4 className="text-[var(--text-main)] font-bold text-lg">User Responsibility</h4>
+      <p>The service is provided "as is" without any warranties. Users assume all responsibility for the way they use the downloaded content. SSSTikPro is not affiliated with ByteDance or TikTok.</p>
+
+      <h4 className="text-[var(--text-main)] font-bold text-lg">Service Updates</h4>
+      <p>We reserve the right to modify or discontinue service features at any time without prior notice as we continue to evolve our futuristic engine.</p>
+    </div>
+  </PageWrapper>
+);
+
+const ContactPage = ({ onBack }: { onBack: () => void }) => (
+  <PageWrapper title="Contact Support" onBack={onBack}>
+    <div className="flex flex-col items-center text-center space-y-8">
+      <div className="w-20 h-20 rounded-[28px] neo-gradient flex items-center justify-center p-0.5 shadow-2xl shadow-neon-blue/20">
+        <div className="w-full h-full bg-[#0a0a0b] rounded-[26px] flex items-center justify-center">
+          <Zap className="w-10 h-10 text-neon-blue" />
+        </div>
+      </div>
+      
+      <div className="space-y-4">
+        <h3 className="text-xl font-bold">Have Questions or Feedback?</h3>
+        <p>Our futuristic support team is ready to assist you with any engine-sync issues or feature requests.</p>
+      </div>
+
+      <div className="w-full p-8 rounded-3xl bg-white/5 border border-neon-blue/20 group hover:border-neon-blue transition-all">
+        <p className="text-[10px] uppercase font-black tracking-[0.3em] text-white/30 mb-2">Primary Communication Channel</p>
+        <a 
+          href="mailto:ssstiktokpro@gmail.com" 
+          className="text-2xl font-bold text-neon-blue hover:text-white transition-colors underline decoration-neon-blue/30 underline-offset-8"
+        >
+          ssstiktokpro@gmail.com
+        </a>
+      </div>
+
+      <p className="text-xs italic text-white/20">We typically respond within 24 standard earth cycles.</p>
+    </div>
+  </PageWrapper>
+);
+
+const Footer = ({ onNavigate }: { onNavigate: (s: Screen) => void }) => (
   <footer className="py-16 px-6 border-t border-white/5 bg-black/20">
     <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 cursor-pointer" onClick={() => onNavigate('home')}>
         <div className="w-10 h-10 rounded-2xl neo-gradient flex items-center justify-center p-0.5">
           <div className="w-full h-full bg-[#0a0a0b] rounded-2xl flex items-center justify-center">
             <Download className="w-5 h-5 text-neon-blue" />
@@ -262,10 +380,10 @@ const Footer = () => (
         <span className="text-xl font-bold italic tracking-tighter">SSSTikPro</span>
       </div>
       <div className="flex flex-wrap justify-center gap-x-12 gap-y-4 text-[11px] font-black tracking-[0.2em] uppercase text-[var(--text-dim)]">
-        <a href="#" className="hover:text-neon-blue transition-colors">About</a>
-        <a href="#" className="hover:text-neon-blue transition-colors">Privacy Policy</a>
-        <a href="#" className="hover:text-neon-blue transition-colors">Terms</a>
-        <a href="#" className="hover:text-neon-blue transition-colors">Contact</a>
+        <button onClick={() => onNavigate('about')} className="hover:text-neon-blue transition-colors">About</button>
+        <button onClick={() => onNavigate('privacy')} className="hover:text-neon-blue transition-colors">Privacy Policy</button>
+        <button onClick={() => onNavigate('terms')} className="hover:text-neon-blue transition-colors">Terms</button>
+        <button onClick={() => onNavigate('contact')} className="hover:text-neon-blue transition-colors">Contact</button>
       </div>
       <p className="text-[10px] text-[var(--text-dim)] uppercase tracking-[0.3em] font-black">
         &copy; 2026 SSSTikPro. <span className="hidden sm:inline">All rights reserved.</span>
@@ -613,6 +731,7 @@ const PALETTES = [
 ];
 
 export default function App() {
+  const [activeScreen, setActiveScreen] = useState<Screen>('home');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [tasks, setTasks] = useState<DownloadTask[]>([]);
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
@@ -764,23 +883,51 @@ export default function App() {
 
             {/* Content Container */}
             <main className="flex-1">
-              <HomeScreen 
-                addDownload={addDownloadTask} 
-                addToast={addToast} 
-                settings={settings} 
-                isAnalyzing={isAnalyzing}
-                setIsAnalyzing={setIsAnalyzing}
-              />
-              <ProcessingModal isOpen={isAnalyzing} />
-              
-              <div className="mt-20">
-                <FeaturesSection />
-                <HowItWorks />
-                <WhyChoose />
-                <FAQ />
-                <SEOContent />
-                <Footer />
-              </div>
+              <AnimatePresence mode="wait">
+                {activeScreen === 'home' ? (
+                  <motion.div
+                    key="home"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <HomeScreen 
+                      addDownload={addDownloadTask} 
+                      addToast={addToast} 
+                      settings={settings} 
+                      isAnalyzing={isAnalyzing}
+                      setIsAnalyzing={setIsAnalyzing}
+                    />
+                    <ProcessingModal isOpen={isAnalyzing} />
+                    
+                    <div className="mt-20">
+                      <FeaturesSection />
+                      <HowItWorks />
+                      <WhyChoose />
+                      <FAQ />
+                      <SEOContent />
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="internal-page"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {activeScreen === 'about' && <AboutPage onBack={() => setActiveScreen('home')} />}
+                    {activeScreen === 'privacy' && <PrivacyPage onBack={() => setActiveScreen('home')} />}
+                    {activeScreen === 'terms' && <TermsPage onBack={() => setActiveScreen('home')} />}
+                    {activeScreen === 'contact' && <ContactPage onBack={() => setActiveScreen('home')} />}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <Footer onNavigate={(s) => {
+                setActiveScreen(s);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }} />
             </main>
 
             {/* Feedback Modal */}
