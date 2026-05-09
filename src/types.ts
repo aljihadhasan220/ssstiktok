@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-export type Screen = 'home' | 'about' | 'privacy' | 'terms' | 'contact';
+export type Screen = 'home' | 'about' | 'privacy' | 'terms' | 'contact' | 'settings';
 
 export type DownloadStatus = 'idle' | 'processing' | 'downloading' | 'completed' | 'error';
 

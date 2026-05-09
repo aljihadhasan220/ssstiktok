@@ -368,6 +368,118 @@ const ContactPage = ({ onBack }: { onBack: () => void }) => (
   </PageWrapper>
 );
 
+const SettingsScreen = ({ settings, setSettings, addToast, onBack }: { 
+  settings: AppSettings, 
+  setSettings: (s: any) => void, 
+  addToast: (m: string) => void,
+  onBack: () => void
+}) => {
+  return (
+    <PageWrapper title="App Settings" onBack={onBack}>
+      <div className="space-y-12">
+          <div className="space-y-6">
+            <h3 className="text-[10px] uppercase tracking-[0.3em] text-[var(--text-dim)] font-black px-2">Visual Engine</h3>
+            <GlassCard className="!p-0 overflow-hidden divide-y divide-white/5 border-white/5 bg-transparent">
+              <div className="flex items-center justify-between p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-neon-purple/20 flex items-center justify-center">
+                    {settings.darkMode ? <Moon className="w-6 h-6 text-neon-purple" /> : <Sun className="w-6 h-6 text-neon-purple" />}
+                  </div>
+                  <div>
+                    <p className="text-base font-bold text-[var(--text-main)]">Theme Mode</p>
+                    <p className="text-[10px] text-[var(--text-dim)] uppercase font-bold tracking-wider">{settings.darkMode ? 'True OLED Dark' : 'Crystal Light'}</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => {
+                    setSettings((prev: any) => ({ ...prev, darkMode: !prev.darkMode }));
+                    addToast(`Theme: ${!settings.darkMode ? 'Dark' : 'Light'}`);
+                  }}
+                  className={`w-14 h-7 rounded-full p-1 transition-all duration-500 relative ${settings.darkMode ? 'neo-gradient' : 'bg-black/10'}`}
+                >
+                  <motion.div 
+                    animate={{ x: settings.darkMode ? 28 : 0 }}
+                    className="w-5 h-5 rounded-full bg-white shadow-lg" 
+                  />
+                </button>
+              </div>
+              
+              <div className="flex flex-col p-6 gap-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-neon-blue/20 flex items-center justify-center">
+                      <Palette className="w-6 h-6 text-neon-blue" />
+                    </div>
+                    <div>
+                      <p className="text-base font-bold text-[var(--text-main)]">Ui Palette</p>
+                      <p className="text-[10px] text-[var(--text-dim)] uppercase font-bold tracking-wider">Futuristic Neon</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-4 px-2">
+                  {PALETTES.map((p) => (
+                    <button
+                      key={p.name}
+                      onClick={() => {
+                        setSettings((prev: any) => ({ ...prev, palette: p }));
+                        addToast(`${p.name} palette applied`);
+                      }}
+                      className={`relative w-12 h-12 rounded-full border-2 transition-all p-1 ${
+                        settings.palette.name === p.name ? 'border-neon-blue scale-110 shadow-lg shadow-neon-blue/20' : 'border-white/10'
+                      }`}
+                    >
+                      <div className="w-full h-full rounded-full overflow-hidden flex rotate-45">
+                        <div className="w-1/2 h-full" style={{ background: p.primary }} />
+                        <div className="w-1/2 h-full" style={{ background: p.secondary }} />
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </GlassCard>
+          </div>
+
+          <div className="space-y-6">
+            <h3 className="text-[10px] uppercase tracking-[0.3em] text-[var(--text-dim)] font-black px-2">Automation</h3>
+            <GlassCard className="!p-0 overflow-hidden border-white/5 bg-transparent">
+               <div className="flex items-center justify-between p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center">
+                    <ClipboardIcon className="w-6 h-6 text-white/50" />
+                  </div>
+                  <div>
+                    <p className="text-base font-bold text-[var(--text-main)]">Auto Paste</p>
+                    <p className="text-[10px] text-[var(--text-dim)] uppercase font-bold tracking-wider">Link detection</p>
+                  </div>
+                </div>
+                 <button 
+                  onClick={() => {
+                    setSettings((prev: any) => ({ ...prev, autoPaste: !prev.autoPaste }));
+                    addToast(`Auto paste ${!settings.autoPaste ? 'enabled' : 'disabled'}`);
+                  }}
+                  className={`w-14 h-7 rounded-full p-1 transition-all duration-500 relative ${settings.autoPaste ? 'neo-gradient' : 'bg-white/10'}`}
+                >
+                  <motion.div 
+                    animate={{ x: settings.autoPaste ? 28 : 0 }}
+                    className="w-5 h-5 rounded-full bg-white shadow-lg" 
+                  />
+                </button>
+              </div>
+            </GlassCard>
+          </div>
+
+        <div className="text-center py-6 opacity-30 mt-10">
+          <div className="inline-flex items-center gap-2 mb-2">
+            <ShieldCheck className="w-4 h-4" />
+            <p className="text-[10px] font-black tracking-[0.3em] uppercase">{APP_NAME} Core v4.2.0</p>
+          </div>
+          <p className="text-[8px] uppercase tracking-widest italic">Designed in Neo-Tokyo for the Global Future</p>
+        </div>
+      </div>
+    </PageWrapper>
+  );
+};
+
 const Footer = ({ onNavigate }: { onNavigate: (s: Screen) => void }) => (
   <footer className="py-16 px-6 border-t border-white/5 bg-black/20">
     <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
@@ -873,9 +985,9 @@ export default function App() {
                   <NeoButton 
                     variant="ghost" 
                     className="p-3 aspect-square !rounded-2xl glass"
-                    onClick={() => setShowFeedback(true)}
+                    onClick={() => setActiveScreen('settings')}
                   >
-                    <Star className="w-5 h-5 text-neon-blue" />
+                    <SettingsIcon className={`w-5 h-5 ${activeScreen === 'settings' ? 'text-neon-purple' : 'text-neon-blue'}`} />
                   </NeoButton>
                 </div>
               </div>
@@ -921,6 +1033,7 @@ export default function App() {
                     {activeScreen === 'privacy' && <PrivacyPage onBack={() => setActiveScreen('home')} />}
                     {activeScreen === 'terms' && <TermsPage onBack={() => setActiveScreen('home')} />}
                     {activeScreen === 'contact' && <ContactPage onBack={() => setActiveScreen('home')} />}
+                    {activeScreen === 'settings' && <SettingsScreen settings={settings} setSettings={setSettings} addToast={addToast} onBack={() => setActiveScreen('home')} />}
                   </motion.div>
                 )}
               </AnimatePresence>
