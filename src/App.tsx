@@ -1122,18 +1122,18 @@ const MainApp = () => {
             {/* Header */}
             <header className="sticky top-0 z-40 p-4 pt-8 glass border-b-0 backdrop-blur-3xl bg-transparent">
               <div className="max-w-6xl mx-auto flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-11 h-11 rounded-2xl neo-gradient flex items-center justify-center p-0.5 shadow-2xl shadow-neon-purple/20">
+                <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl neo-gradient flex items-center justify-center p-0.5 shadow-2xl shadow-neon-purple/20 flex-shrink-0">
                     <div className="w-full h-full bg-[var(--bg-color)] rounded-2xl flex items-center justify-center">
-                      <Download className="w-6 h-6 text-neon-blue" />
+                      <Download className="w-5 h-5 sm:w-6 sm:h-6 text-neon-blue" />
                     </div>
                   </div>
-                  <div className="hidden sm:block">
-                    <h1 className="text-2xl font-bold tracking-tight italic">{APP_NAME}</h1>
-                    <p className="text-[8px] font-black tracking-[0.4em] uppercase text-[var(--text-dim)]">Next-Gen Downloader</p>
+                  <div className="flex flex-col min-w-0">
+                    <h1 className="text-lg sm:text-2xl font-bold tracking-tight italic leading-tight truncate">{APP_NAME}</h1>
+                    <p className="text-[6px] sm:text-[8px] font-black tracking-[0.2em] sm:tracking-[0.4em] uppercase text-[var(--text-dim)] truncate">Next-Gen Downloader</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 ml-2">
                   <LanguageSelector />
                   <NeoButton 
                     variant="ghost" 
