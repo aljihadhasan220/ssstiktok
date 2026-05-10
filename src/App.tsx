@@ -1054,8 +1054,13 @@ const MainApp = () => {
         
         {/* Global Favicons & Icons */}
         <link rel="icon" type="image/x-icon" href="https://ssstikpro.site/favicon.ico" />
+        <link rel="shortcut icon" href="https://ssstikpro.site/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="https://ssstikpro.site/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="https://ssstikpro.site/android-chrome-192x192.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="https://ssstikpro.site/android-chrome-512x512.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="https://ssstikpro.site/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#0a0a0c" />
         
         {/* Hreflang Tags */}
         <link rel="alternate" hrefLang="x-default" href="https://ssstikpro.site" />
@@ -1068,11 +1073,37 @@ const MainApp = () => {
         <meta property="og:description" content={seo.description} />
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://ssstikpro.site/android-chrome-512x512.png" />
         
         {/* Twitter Tags */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={seo.title} />
         <meta name="twitter:description" content={seo.description} />
+        <meta name="twitter:image" content="https://ssstikpro.site/android-chrome-512x512.png" />
+
+        {/* Structured Data: WebSite & Organization */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "SSSTikPro",
+            "url": "https://ssstikpro.site",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://ssstikpro.site/?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
+          })}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "SSSTikPro",
+            "url": "https://ssstikpro.site",
+            "logo": "https://ssstikpro.site/android-chrome-512x512.png"
+          })}
+        </script>
 
         {/* Structured Data FAQ */}
         <script type="application/ld+json">
