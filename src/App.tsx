@@ -1231,12 +1231,15 @@ const MainApp = () => {
         <link rel="icon" type="image/x-icon" href="https://ssstikpro.site/favicon.ico" />
         <link rel="shortcut icon" href="https://ssstikpro.site/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="https://ssstikpro.site/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="https://ssstikpro.site/favicon-16x16.png" />
         <link rel="icon" type="image/png" sizes="192x192" href="https://ssstikpro.site/android-chrome-192x192.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="https://ssstikpro.site/android-chrome-512x512.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="https://ssstikpro.site/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#0a0a0c" />
+        <meta name="theme-color" content="#0b061f" />
+        <meta name="apple-mobile-web-app-title" content="SSSTikPro" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="format-detection" content="telephone=no" />
         

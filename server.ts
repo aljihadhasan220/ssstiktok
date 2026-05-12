@@ -15,6 +15,17 @@ async function startServer() {
     res.json({ status: "ok" });
   });
 
+  // HTTPS Redirect middleware (for production)
+  if (process.env.NODE_ENV === "production") {
+    app.enable('trust proxy');
+    app.use((req, res, next) => {
+      if (req.headers['x-forwarded-proto'] !== 'https') {
+        return res.redirect(301, 'https://' + req.hostname + req.originalUrl);
+      }
+      next();
+    });
+  }
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
@@ -32,7 +43,7 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running and enforcing HTTPS on port ${PORT}`);
   });
 }
 
