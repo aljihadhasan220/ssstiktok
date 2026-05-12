@@ -1232,6 +1232,7 @@ const MainApp = () => {
         <link rel="shortcut icon" href="https://ssstikpro.site/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="https://ssstikpro.site/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="https://ssstikpro.site/favicon-16x16.png" />
+        <link rel="icon" type="image/svg+xml" href="https://ssstikpro.site/icon.svg" />
         <link rel="icon" type="image/png" sizes="192x192" href="https://ssstikpro.site/android-chrome-192x192.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="https://ssstikpro.site/android-chrome-512x512.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="https://ssstikpro.site/apple-touch-icon.png" />
