@@ -1083,23 +1083,28 @@ const MainApp = () => {
 
   // Sync route with activeScreen
   useEffect(() => {
-    if (location.pathname.startsWith('/blog')) {
+    const path = location.pathname;
+    if (path.startsWith('/blog')) {
       setActiveScreen('blog');
-    } else if (location.pathname === '/' || SUPPORTED_LANGS.includes(location.pathname.slice(1) as any)) {
+    } else if (path === '/about') {
+      setActiveScreen('about');
+    } else if (path === '/privacy') {
+      setActiveScreen('privacy');
+    } else if (path === '/terms') {
+      setActiveScreen('terms');
+    } else if (path === '/contact') {
+      setActiveScreen('contact');
+    } else if (path === '/' || SUPPORTED_LANGS.includes(path.slice(1) as any)) {
       setActiveScreen('home');
-    } else {
-      // For other internal states we keep them state-based but reset on direct access to home
-      if (activeScreen === 'blog') setActiveScreen('home');
     }
   }, [location.pathname]);
 
   const handleNavigate = (s: Screen) => {
-    if (s === 'blog') {
-      navigate('/blog');
-    } else if (s === 'home') {
+    if (s === 'home') {
       navigate(currentLang === 'en' ? '/' : `/${currentLang}`);
       setActiveScreen('home');
     } else {
+      navigate(`/${s}`);
       setActiveScreen(s);
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1199,14 +1204,26 @@ const MainApp = () => {
   };
 
   const canonicalUrl = currentLang === 'en' ? 'https://ssstikpro.site' : `https://ssstikpro.site/${currentLang}`;
+  const currentUrl = activeScreen === 'home' ? canonicalUrl : `https://ssstikpro.site/${activeScreen}`;
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-[var(--bg-color)] font-sans selection:bg-neon-purple/30 text-[var(--text-main)] transition-colors duration-500">
       <Helmet>
-        <title>{seo.title}</title>
-        <meta name="description" content={seo.description} />
+        <title>{
+          activeScreen === 'blog' ? `Blog – ${APP_NAME} Insights` :
+          activeScreen === 'about' ? `About – ${APP_NAME}` :
+          activeScreen === 'privacy' ? `Privacy Policy – ${APP_NAME}` :
+          activeScreen === 'terms' ? `Terms of Service – ${APP_NAME}` :
+          activeScreen === 'contact' ? `Contact Us – ${APP_NAME}` :
+          seo.title
+        }</title>
+        <meta name="description" content={
+          activeScreen === 'blog' ? "Deep dives, guides, and professional tips on downloading TikTok videos without watermark using SSSTikPro." :
+          activeScreen === 'about' ? `Learn about ${APP_NAME}, the world's most advanced TikTok downloader.` :
+          seo.description
+        } />
         <meta name="keywords" content={seo.keywords} />
-        <link rel="canonical" href={canonicalUrl} />
+        <link rel="canonical" href={currentUrl} />
         
         {/* Global Favicons & Icons */}
         <link rel="icon" type="image/x-icon" href="https://ssstikpro.site/favicon.ico" />
@@ -1224,10 +1241,10 @@ const MainApp = () => {
           <link key={l} rel="alternate" hrefLang={l} href={`https://ssstikpro.site${l === 'en' ? '' : `/${l}`}`} />
         ))}
 
-        {/* OG Tags */}
-        <meta property="og:title" content={seo.title} />
+        {/* Open Graph Tags */}
+        <meta property="og:title" content={activeScreen === 'home' ? seo.title : `Blog – ${APP_NAME}`} />
         <meta property="og:description" content={seo.description} />
-        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:url" content={currentUrl} />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://ssstikpro.site/android-chrome-512x512.png" />
         
@@ -1453,6 +1470,10 @@ export default function App() {
           <Route path="/" element={<MainApp />} />
           <Route path="/blog" element={<MainApp />} />
           <Route path="/blog/:lang" element={<MainApp />} />
+          <Route path="/about" element={<MainApp />} />
+          <Route path="/privacy" element={<MainApp />} />
+          <Route path="/terms" element={<MainApp />} />
+          <Route path="/contact" element={<MainApp />} />
           <Route path="/:lang" element={<MainApp />} />
         </Routes>
       </BrowserRouter>
