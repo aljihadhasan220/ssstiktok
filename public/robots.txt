@@ -1,4 +1,17 @@
 User-agent: *
 Allow: /
+Allow: /blog
+Allow: /en
+Allow: /in
+Allow: /id
+Allow: /vi
+Allow: /ja
+Allow: /zh
+Allow: /th
+Allow: /de
+Allow: /ar
+Allow: /ms
+Allow: /pl
+Allow: /cs
 
 Sitemap: https://ssstikpro.site/sitemap.xml

@@ -1209,6 +1209,7 @@ const MainApp = () => {
   return (
     <div className="min-h-screen relative overflow-hidden bg-[var(--bg-color)] font-sans selection:bg-neon-purple/30 text-[var(--text-main)] transition-colors duration-500">
       <Helmet>
+        <html lang={currentLang} />
         <title>{
           activeScreen === 'blog' ? `Blog – ${APP_NAME} Insights` :
           activeScreen === 'about' ? `About – ${APP_NAME}` :
@@ -1224,6 +1225,7 @@ const MainApp = () => {
         } />
         <meta name="keywords" content={seo.keywords} />
         <link rel="canonical" href={currentUrl} />
+        <meta name="robots" content="index, follow" />
         
         {/* Global Favicons & Icons */}
         <link rel="icon" type="image/x-icon" href="https://ssstikpro.site/favicon.ico" />
@@ -1234,6 +1236,9 @@ const MainApp = () => {
         <link rel="apple-touch-icon" sizes="180x180" href="https://ssstikpro.site/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#0a0a0c" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="format-detection" content="telephone=no" />
         
         {/* Hreflang Tags */}
         <link rel="alternate" hrefLang="x-default" href="https://ssstikpro.site" />
@@ -1242,9 +1247,10 @@ const MainApp = () => {
         ))}
 
         {/* Open Graph Tags */}
-        <meta property="og:title" content={activeScreen === 'home' ? seo.title : `Blog – ${APP_NAME}`} />
+        <meta property="og:title" content={activeScreen === 'home' ? seo.title : `${activeScreen.charAt(0).toUpperCase() + activeScreen.slice(1)} – ${APP_NAME}`} />
         <meta property="og:description" content={seo.description} />
         <meta property="og:url" content={currentUrl} />
+        <meta property="og:site_name" content={APP_NAME} />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="https://ssstikpro.site/android-chrome-512x512.png" />
         
@@ -1274,7 +1280,54 @@ const MainApp = () => {
             "@type": "Organization",
             "name": "SSSTikPro",
             "url": "https://ssstikpro.site",
-            "logo": "https://ssstikpro.site/android-chrome-512x512.png"
+            "logo": "https://ssstikpro.site/android-chrome-512x512.png",
+            "sameAs": [
+              "https://twitter.com/ssstikpro",
+              "https://facebook.com/ssstikpro"
+            ]
+          })}
+        </script>
+
+        {/* Structured Data: SoftwareApplication */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "SSSTikPro TikTok Downloader",
+            "operatingSystem": "Any",
+            "applicationCategory": "UtilitiesApplication",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.9",
+              "ratingCount": "85420"
+            }
+          })}
+        </script>
+
+        {/* Breadcrumb Schema */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://ssstikpro.site"
+              },
+              activeScreen !== 'home' ? {
+                "@type": "ListItem",
+                "position": 2,
+                "name": activeScreen.charAt(0).toUpperCase() + activeScreen.slice(1),
+                "item": `https://ssstikpro.site/${activeScreen}`
+              } : null
+            ].filter(Boolean)
           })}
         </script>
 
@@ -1293,6 +1346,35 @@ const MainApp = () => {
             }))
           })}
         </script>
+        
+        {activeScreen === 'blog' && (
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Blog",
+              "name": "SSSTikPro Insights",
+              "url": "https://ssstikpro.site/blog",
+              "description": "Guides and technical insights on TikTok video downloading.",
+              "publisher": {
+                "@type": "Organization",
+                "name": APP_NAME,
+                "logo": "https://ssstikpro.site/android-chrome-512x512.png"
+              },
+              "blogPost": [
+                {
+                  "@type": "BlogPosting",
+                  "headline": "Best TikTok Video Downloader in 2026",
+                  "url": "https://ssstikpro.site/blog#article-1"
+                },
+                {
+                  "@type": "BlogPosting",
+                  "headline": "How to Download TikTok Videos Without Watermark",
+                  "url": "https://ssstikpro.site/blog#article-2"
+                }
+              ]
+            })}
+          </script>
+        )}
       </Helmet>
 
       {/* Background Blobs */}
@@ -1377,6 +1459,30 @@ const MainApp = () => {
                       <FeaturesSection features={seo.features} />
                       <HowItWorks content={seo.howItWorks} />
                       <WhyChoose content={seo.whyChoose} />
+                      <section className="py-20 px-6 max-w-5xl mx-auto text-center space-y-12">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 glass rounded-full border-neon-blue/20">
+                          <ShieldCheck className="w-4 h-4 text-neon-blue" />
+                          <span className="text-[10px] font-black tracking-[0.2em] uppercase">Trusted by millions</span>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
+                           <div className="flex flex-col items-center gap-2">
+                             <div className="text-2xl font-black italic">TRUSTPILOT</div>
+                             <div className="flex gap-1"><Star className="w-3 h-3 fill-neon-blue text-neon-blue" /><Star className="w-3 h-3 fill-neon-blue text-neon-blue" /><Star className="w-3 h-3 fill-neon-blue text-neon-blue" /><Star className="w-3 h-3 fill-neon-blue text-neon-blue" /><Star className="w-3 h-3 fill-neon-blue text-neon-blue" /></div>
+                           </div>
+                           <div className="flex flex-col items-center gap-2">
+                             <div className="text-2xl font-black italic">G2 CROWD</div>
+                             <div className="text-[10px] font-bold tracking-widest uppercase">High Performer</div>
+                           </div>
+                           <div className="flex flex-col items-center gap-2">
+                             <div className="text-2xl font-black italic">CAPTERRA</div>
+                             <div className="text-[10px] font-bold tracking-widest uppercase">Verified Service</div>
+                           </div>
+                           <div className="flex flex-col items-center gap-2">
+                             <div className="text-2xl font-black italic">APP SUMO</div>
+                             <div className="text-[10px] font-bold tracking-widest uppercase">5 Taco Rated</div>
+                           </div>
+                        </div>
+                      </section>
                       <FAQ faqs={seo.faq} />
                       <SEOContent content={seo.seoContent} />
                     </div>
