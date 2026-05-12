@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   MoreVertical,
   ArrowRight,
+  ChevronRight,
   Share2,
   Trash2,
   Moon,
@@ -542,6 +543,7 @@ const Footer = ({ onNavigate }: { onNavigate: (s: Screen) => void }) => (
       </div>
       <div className="flex flex-wrap justify-center gap-x-12 gap-y-4 text-[11px] font-black tracking-[0.2em] uppercase text-[var(--text-dim)]">
         <button onClick={() => onNavigate('about')} className="hover:text-neon-blue transition-colors">About</button>
+        <button onClick={() => onNavigate('blog')} className="hover:text-neon-blue transition-colors">Blog</button>
         <button onClick={() => onNavigate('privacy')} className="hover:text-neon-blue transition-colors">Privacy Policy</button>
         <button onClick={() => onNavigate('terms')} className="hover:text-neon-blue transition-colors">Terms</button>
         <button onClick={() => onNavigate('contact')} className="hover:text-neon-blue transition-colors">Contact</button>
@@ -941,14 +943,168 @@ const LanguageSelector = () => {
   );
 };
 
+const BlogSection = ({ onNavigate }: { onNavigate: (s: Screen) => void }) => {
+  const articles = [
+    {
+      id: 1,
+      title: "Best TikTok Video Downloader in 2026",
+      desc: "Discover why SSSTikPro remains the top choice for millions of users worldwide in 2026.",
+      content: "As we move into 2026, TikTok continues to dominate the social media landscape. With its ever-evolving algorithm and content styles, users are constantly looking for reliable ways to save their favorite moments. SSSTikPro has stayed ahead of the curve by implementing next-gen processing engines that handle 4K content with ease. Our platform doesn't just download; it optimizes the file for your specific device, ensuring the highest fidelity possible without any intrusive watermarks."
+    },
+    {
+      id: 2,
+      title: "How to Download TikTok Videos Without Watermark",
+      desc: "A step-by-step guide to getting clean, professional-looking videos using our premium tool.",
+      content: "Removing watermarks from TikTok videos is essential for content creators who wish to repurpose their work on other platforms like Instagram Reels or YouTube Shorts. To do this with SSSTikPro, simply copy the video link from TikTok, paste it into our futuristic input field, and let our engine strip away the branding. In seconds, you'll have a clean MP4 file ready for your next project."
+    },
+    {
+      id: 3,
+      title: "Fastest TikTok MP4 Downloader Online",
+      desc: "Speed is our priority. Learn how our cloud infrastructure delivers instant results.",
+      content: "Our servers are distributed globally, ensuring that no matter where you are, your download starts instantly. We use advanced caching and edge computing to minimize latency. When compared to traditional tools, SSSTikPro consistently provides results 3x faster, making it the preferred choice for power users who save dozens of videos daily."
+    },
+    {
+      id: 4,
+      title: "Save TikTok Videos in HD Quality",
+      desc: "Don't settle for blurry rips. Get the original high-definition source every time.",
+      content: "Many downloaders compress video files to save bandwidth, resulting in pixelated content. SSSTikPro accesses the highest quality streams directly from TikTok's CDN. Whether it's 1080p or the latest HD formats, we ensure your offline collection looks just as good as the original feed."
+    },
+    {
+      id: 5,
+      title: "TikTok Downloader for Android & iPhone",
+      desc: "Cross-platform compatibility at its best. No apps required, just your browser.",
+      content: "SSSTikPro is a Progressive Web App (PWA) compatible site. On Android, it works seamlessly with Chrome, while on iOS, Safari provides a smooth experience. You don't need to install bulky apps that track your data; just bookmark our site and use it as a native tool whenever inspiration strikes."
+    },
+    {
+      id: 6,
+      title: "Why SSSTikPro Is Safe & Secure",
+      desc: "Privacy matters. We explain our zero-data retention policy and security measures.",
+      content: "Security is built into our DNA. We use SSL encryption for all connections and we never store your downloaded files or personal information. Unlike other platforms that require social logins, SSSTikPro is completely anonymous. Your digital footprint remains private while you enjoy premium features."
+    },
+    {
+      id: 7,
+      title: "Unlimited TikTok Downloads Without Login",
+      desc: "No accounts, no subscriptions, no limits. Pure freedom for every user.",
+      content: "We believe that the internet should be free and accessible. That's why SSSTikPro will never place a 'paywall' or 'login wall' between you and your downloads. From viral dances to educational clips, you can save as many videos as you want without ever creating an account."
+    },
+    {
+      id: 8,
+      title: "How Creators Save Viral TikTok Videos",
+      desc: "Professional tips on archiving content for research, reaction videos, and inspiration.",
+      content: "Top-tier content creators use SSSTikPro to build 'swipe files' of trending content. By saving videos without watermarks, they can analyze editing techniques, transitions, and audio trends in high detail. Archiving viral moments allows for better trend prediction and high-quality reaction content that resonates with audiences."
+    }
+  ];
+
+  return (
+    <div className="py-20 px-6 max-w-6xl mx-auto space-y-24">
+      {/* Hero */}
+      <section className="text-center space-y-6">
+        <motion.h1 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-4xl md:text-6xl font-black neo-text-gradient leading-tight"
+        >
+          Insights & Guides
+        </motion.h1>
+        <p className="text-[var(--text-dim)] max-w-2xl mx-auto uppercase tracking-[0.3em] font-black text-xs">
+          The SSSTikPro Blog – Master the Art of TikTok Archiving
+        </p>
+      </section>
+
+      {/* Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {articles.map((article, idx) => (
+          <motion.div
+            key={article.id}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: idx * 0.1 }}
+            className="glass rounded-[32px] p-8 border-white/5 flex flex-col h-full hover:border-neon-blue/30 transition-all group relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-24 h-24 neo-gradient opacity-0 group-hover:opacity-10 blur-3xl transition-opacity" />
+            <h3 className="text-lg font-bold mb-4 line-clamp-2 leading-tight">{article.title}</h3>
+            <p className="text-sm text-[var(--text-dim)] mb-8 flex-grow leading-relaxed italic">{article.desc}</p>
+            <a 
+              href={`#article-${article.id}`} 
+              className="text-[10px] font-black uppercase tracking-widest text-neon-blue flex items-center gap-2 group-hover:translate-x-2 transition-transform"
+            >
+              Read More <ChevronRight className="w-3 h-3" />
+            </a>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Detailed Articles */}
+      <div className="space-y-32 py-20 border-t border-white/5">
+        {articles.map((article) => (
+          <section id={`article-${article.id}`} key={article.id} className="max-w-3xl mx-auto space-y-8 scroll-mt-32">
+            <div className="space-y-4">
+              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-neon-purple">Article 0{article.id}</span>
+              <h2 className="text-3xl md:text-4xl font-bold leading-tight">{article.title}</h2>
+            </div>
+            <div className="glass rounded-[40px] p-10 border-white/5 text-lg leading-relaxed text-[var(--text-dim)] whitespace-pre-wrap">
+              {article.content}
+            </div>
+            <NeoButton 
+              variant="ghost" 
+              className="!rounded-2xl"
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            >
+              UPWARD TRANSMISSION
+            </NeoButton>
+          </section>
+        ))}
+      </div>
+
+      <div className="text-center py-10">
+        <NeoButton 
+          variant="primary" 
+          className="px-10 py-5 text-sm font-bold tracking-widest rounded-3xl"
+          onClick={() => onNavigate('home')}
+        >
+          RETURN TO INTERFACE
+        </NeoButton>
+      </div>
+    </div>
+  );
+};
+
 const MainApp = () => {
   const { lang } = useParams<{ lang?: string }>();
   const location = useLocation();
+  const navigate = useNavigate();
   const currentLang = (lang && SUPPORTED_LANGS.includes(lang as any) ? lang : 'en') as LangCode;
   const seo = SEO_DATA[currentLang];
 
   const [activeScreen, setActiveScreen] = useState<Screen>('home');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  // Sync route with activeScreen
+  useEffect(() => {
+    if (location.pathname.startsWith('/blog')) {
+      setActiveScreen('blog');
+    } else if (location.pathname === '/' || SUPPORTED_LANGS.includes(location.pathname.slice(1) as any)) {
+      setActiveScreen('home');
+    } else {
+      // For other internal states we keep them state-based but reset on direct access to home
+      if (activeScreen === 'blog') setActiveScreen('home');
+    }
+  }, [location.pathname]);
+
+  const handleNavigate = (s: Screen) => {
+    if (s === 'blog') {
+      navigate('/blog');
+    } else if (s === 'home') {
+      navigate(currentLang === 'en' ? '/' : `/${currentLang}`);
+      setActiveScreen('home');
+    } else {
+      setActiveScreen(s);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const [tasks, setTasks] = useState<DownloadTask[]>([]);
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
   const [settings, setSettings] = useState<AppSettings>({
@@ -1153,7 +1309,10 @@ const MainApp = () => {
             {/* Header */}
             <header className="sticky top-0 z-40 p-4 pt-8 glass border-b-0 backdrop-blur-3xl bg-transparent">
               <div className="max-w-6xl mx-auto flex items-center justify-between">
-                <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+                <div 
+                  className="flex items-center gap-2 sm:gap-4 min-w-0 cursor-pointer"
+                  onClick={() => handleNavigate('home')}
+                >
                   <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl neo-gradient flex items-center justify-center p-0.5 shadow-2xl shadow-neon-purple/20 flex-shrink-0">
                     <div className="w-full h-full bg-[var(--bg-color)] rounded-2xl flex items-center justify-center">
                       <Download className="w-5 h-5 sm:w-6 sm:h-6 text-neon-blue" />
@@ -1213,18 +1372,16 @@ const MainApp = () => {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    {activeScreen === 'about' && <AboutPage onBack={() => setActiveScreen('home')} />}
-                    {activeScreen === 'privacy' && <PrivacyPage onBack={() => setActiveScreen('home')} />}
-                    {activeScreen === 'terms' && <TermsPage onBack={() => setActiveScreen('home')} />}
-                    {activeScreen === 'contact' && <ContactPage onBack={() => setActiveScreen('home')} />}
-                    {activeScreen === 'settings' && <SettingsScreen settings={settings} setSettings={setSettings} addToast={addToast} onBack={() => setActiveScreen('home')} />}
+                    {activeScreen === 'about' && <AboutPage onBack={() => handleNavigate('home')} />}
+                    {activeScreen === 'privacy' && <PrivacyPage onBack={() => handleNavigate('home')} />}
+                    {activeScreen === 'terms' && <TermsPage onBack={() => handleNavigate('home')} />}
+                    {activeScreen === 'contact' && <ContactPage onBack={() => handleNavigate('home')} />}
+                    {activeScreen === 'blog' && <BlogSection onNavigate={handleNavigate} />}
+                    {activeScreen === 'settings' && <SettingsScreen settings={settings} setSettings={setSettings} addToast={addToast} onBack={() => handleNavigate('home')} />}
                   </motion.div>
                 )}
               </AnimatePresence>
-              <Footer onNavigate={(s) => {
-                setActiveScreen(s);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }} />
+              <Footer onNavigate={handleNavigate} />
             </main>
 
             {/* Feedback Modal */}
@@ -1294,6 +1451,8 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<MainApp />} />
+          <Route path="/blog" element={<MainApp />} />
+          <Route path="/blog/:lang" element={<MainApp />} />
           <Route path="/:lang" element={<MainApp />} />
         </Routes>
       </BrowserRouter>
