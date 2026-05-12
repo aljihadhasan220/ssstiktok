@@ -5,7 +5,13 @@
   "display": "standalone",
   "background_color": "#0b061f",
   "theme_color": "#0b061f",
-  "description": "Premium TikTok Video Downloader Without Watermark",
+
+  "orientation": "portrait",
+  "id": "/",
+  "categories": ["video", "tools", "entertainment"],
+
+  "description": "Premium TikTok Video Downloader",
+
   "icons": [
     {
       "src": "https://ssstikpro.site/android-chrome-192x192.png",
@@ -18,6 +24,15 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+
+  "screenshots": [
+    {
+      "src": "/screenshot1.png",
+      "sizes": "857x1536",
+      "type": "image/png",
+      "form_factor": "narrow"
     }
   ]
 }
