@@ -17,6 +17,7 @@
     <xhtml:link rel="alternate" hreflang="ms" href="https://ssstikpro.site/ms"/>
     <xhtml:link rel="alternate" hreflang="pl" href="https://ssstikpro.site/pl"/>
     <xhtml:link rel="alternate" hreflang="cs" href="https://ssstikpro.site/cs"/>
+    <xhtml:link rel="alternate" hreflang="bn" href="https://ssstikpro.site/bn"/>
   </url>
   <url>
     <loc>https://ssstikpro.site/blog</loc>
@@ -42,4 +43,5 @@
   <url><loc>https://ssstikpro.site/ms</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
   <url><loc>https://ssstikpro.site/pl</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
   <url><loc>https://ssstikpro.site/cs</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://ssstikpro.site/bn</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
 </urlset>

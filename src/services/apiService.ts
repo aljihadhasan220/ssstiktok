@@ -5,14 +5,19 @@ import { TikTokVideo } from '../types';
  * Robust implementation with URL validation and error simulation.
  */
 // Simple persistent cache using localStorage
-const getCache = () => {
+interface CacheEntry {
+  data: TikTokVideo;
+  timestamp: number;
+}
+
+const getCache = (): Map<string, CacheEntry> => {
   try {
     const saved = localStorage.getItem('ssstikpro_api_cache');
-    return saved ? new Map(JSON.parse(saved)) : new Map<string, { data: TikTokVideo, timestamp: number }>();
-  } catch { return new Map<string, { data: TikTokVideo, timestamp: number }>(); }
+    return saved ? new Map(JSON.parse(saved)) : new Map<string, CacheEntry>();
+  } catch { return new Map<string, CacheEntry>(); }
 };
 
-const saveCache = (cache: Map<string, any>) => {
+const saveCache = (cache: Map<string, CacheEntry>) => {
   try {
     localStorage.setItem('ssstikpro_api_cache', JSON.stringify(Array.from(cache.entries())));
   } catch (e) { console.warn("Cache save failed:", e); }

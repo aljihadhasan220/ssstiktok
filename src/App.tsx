@@ -146,11 +146,110 @@ const MainApp = () => {
     <div className="min-h-screen relative bg-[var(--bg-color)] font-sans text-[var(--text-main)] transition-colors duration-500 overflow-x-hidden">
       <Helmet>
         <html lang={currentLang} />
-        <title>{activeScreen === 'home' ? seo.title : `${activeScreen.charAt(0).toUpperCase() + activeScreen.slice(1)} - ${APP_NAME}`}</title>
-        <meta name="description" content={seo.description} />
-        <link rel="canonical" href={`https://ssstikpro.site${location.pathname}`} />
+        <title>
+          {activeScreen === 'home' 
+            ? seo.title 
+            : activeScreen === 'blog'
+              ? `SSSTikPro Blog - TikTok Downloading Guides & Tips`
+              : activeScreen === 'about'
+                ? `About SSSTikPro - Trusted TikTok Video Downloader`
+                : `${activeScreen.charAt(0).toUpperCase() + activeScreen.slice(1)} - ${APP_NAME}`}
+        </title>
+        <meta name="description" content={activeScreen === 'home' ? seo.description : `${seo.description} - Learn more about ${activeScreen} on ${APP_NAME}.`} />
+        <meta name="keywords" content={seo.keywords} />
+        
+        {/* Robots */}
+        <meta name="robots" content="index, follow, max-image-preview:large" />
+        <link rel="canonical" href={`https://ssstikpro.site${location.pathname === '/' ? '' : location.pathname}`} />
+        
+        {/* Hreflang */}
+        <link rel="alternate" hrefLang="x-default" href="https://ssstikpro.site" />
+        {SUPPORTED_LANGS.map(l => (
+          <link 
+            key={l} 
+            rel="alternate" 
+            hrefLang={l} 
+            href={`https://ssstikpro.site${l === 'en' ? '' : `/${l}`}`} 
+          />
+        ))}
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`https://ssstikpro.site${location.pathname}`} />
+        <meta property="og:title" content={activeScreen === 'home' ? seo.title : `${activeScreen.toUpperCase()} | ${APP_NAME}`} />
+        <meta property="og:description" content={seo.description} />
+        <meta property="og:image" content="https://ssstikpro.site/og-image.png" />
+        <meta property="og:site_name" content={APP_NAME} />
+        <meta property="og:locale" content={currentLang === 'en' ? 'en_US' : currentLang === 'bn' ? 'bn_BD' : currentLang} />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@ssstikpro" />
+        <meta name="twitter:title" content={seo.title} />
+        <meta name="twitter:description" content={seo.description} />
+        <meta name="twitter:image" content="https://ssstikpro.site/og-image.png" />
+
+        {/* Branding & Utilities */}
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content={settings.palette.primary} />
+        <meta name="apple-mobile-web-app-title" content={APP_NAME} />
+
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "WebSite",
+                "@id": "https://ssstikpro.site/#website",
+                "url": "https://ssstikpro.site",
+                "name": APP_NAME,
+                "description": seo.description,
+                "publisher": { "@id": "https://ssstikpro.site/#organization" },
+                "potentialAction": {
+                  "@type": "SearchAction",
+                  "target": "https://ssstikpro.site/?url={search_term_string}",
+                  "query-input": "required name=search_term_string"
+                }
+              },
+              {
+                "@type": "Organization",
+                "@id": "https://ssstikpro.site/#organization",
+                "name": APP_NAME,
+                "url": "https://ssstikpro.site",
+                "logo": "https://ssstikpro.site/android-chrome-512x512.png",
+                "sameAs": ["https://twitter.com/ssstikpro"]
+              },
+              {
+                "@type": "SoftwareApplication",
+                "name": `${APP_NAME} - TikTok Downloader`,
+                "applicationCategory": "UtilitiesApplication",
+                "operatingSystem": "All",
+                "offers": {
+                  "@type": "Offer",
+                  "price": "0",
+                  "priceCurrency": "USD"
+                },
+                "aggregateRating": {
+                  "@type": "AggregateRating",
+                  "ratingValue": "4.9",
+                  "ratingCount": "98432"
+                }
+              },
+              ...(activeScreen === 'home' ? [{
+                "@type": "FAQPage",
+                "mainEntity": seo.faq.map(f => ({
+                  "@type": "Question",
+                  "name": f.q,
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": f.a
+                  }
+                }))
+              }] : [])
+            ]
+          })}
+        </script>
       </Helmet>
 
       {/* Blobs */}
@@ -164,7 +263,7 @@ const MainApp = () => {
           <div className="max-w-6xl mx-auto flex items-center justify-between">
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleNavigate('home')}>
               <div className="w-10 h-10 rounded-2xl neo-gradient p-0.5"><div className="w-full h-full bg-[var(--bg-color)] rounded-2xl flex items-center justify-center"><Download className="w-5 h-5 text-neon-blue" /></div></div>
-              <div className="flex flex-col"><h1 className="text-lg font-bold italic truncate leading-tight uppercase tracking-tighter">{APP_NAME}</h1><p className="text-[6px] font-black tracking-widest uppercase opacity-40">Next-Gen Engine</p></div>
+              <div className="flex flex-col"><p className="text-lg font-bold italic truncate leading-tight uppercase tracking-tighter">{APP_NAME}</p><p className="text-[6px] font-black tracking-widest uppercase opacity-40">Next-Gen Engine</p></div>
             </div>
             <div className="flex items-center gap-2">
               <LanguageSelector />

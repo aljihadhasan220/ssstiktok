@@ -660,10 +660,10 @@ export const HomeScreen = React.memo(({ addDownload, addToast, settings, isAnaly
             <ShieldCheck className="w-4 h-4 text-neon-blue" />
             <span className="text-[10px] font-bold tracking-widest uppercase text-[var(--text-dim)]">Secure & Watermark Free</span>
           </div>
-          <h2 className="text-[38px] sm:text-[42px] font-bold px-4 leading-[1.1] tracking-tight text-[var(--text-main)] text-center">
+          <h1 className="text-[38px] sm:text-[42px] font-bold px-4 leading-[1.1] tracking-tight text-[var(--text-main)] text-center">
             TikTok Video <br />
             <span className="neo-text-gradient italic">Downloader</span>
-          </h2>
+          </h1>
           <p className="text-[var(--text-dim)] text-sm max-w-[280px] mx-auto leading-relaxed text-center">
             Preserve your favorite moments in HD quality, instantly.
           </p>
@@ -760,6 +760,7 @@ export const HomeScreen = React.memo(({ addDownload, addToast, settings, isAnaly
                           className="w-full h-full object-cover cursor-grab active:cursor-grabbing will-change-transform" 
                           draggable={false}
                           loading="eager"
+                          alt={`TikTok Slideshow Image ${currentSlide + 1} downloaded via SSSTikPro`}
                         />
                       </AnimatePresence>
                       <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-3 pointer-events-none">
@@ -775,7 +776,7 @@ export const HomeScreen = React.memo(({ addDownload, addToast, settings, isAnaly
                    </div>
                 ) : (
                   <div className="relative w-full sm:w-32 aspect-[1/1] sm:aspect-[9/16] rounded-2xl overflow-hidden bg-black/40 group">
-                    <img src={result.thumbnail} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="eager" />
+                    <img src={result.thumbnail} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="eager" alt={`${result.description ? result.description.slice(0, 50) : 'TikTok Video'} - Saved with SSSTikPro`} />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                     <div className="absolute bottom-2 left-2 flex items-center gap-1">
                       <div className="px-1.5 py-0.5 glass rounded-[4px] text-[8px] font-black bg-neon-blue text-black">ULTRA HD</div>
@@ -785,7 +786,7 @@ export const HomeScreen = React.memo(({ addDownload, addToast, settings, isAnaly
                 <div className="flex-1 space-y-3 sm:space-y-4 py-1">
                   <div className="flex items-center gap-2 sm:gap-3">
                     <div className="relative">
-                      <img src={result.author.avatar} className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-white/10" />
+                      <img src={result.author.avatar} className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-white/10" alt={`TikTok Creator ${result.author.id} - Source Profile`} />
                       <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 sm:w-4 sm:h-4 bg-neon-blue rounded-full flex items-center justify-center p-0.5 border-2 border-[var(--bg-color)]">
                         <CheckCircle2 className="w-full h-full text-black" />
                       </div>

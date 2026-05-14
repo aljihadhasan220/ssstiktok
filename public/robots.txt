@@ -13,6 +13,7 @@ Allow: /ar
 Allow: /ms
 Allow: /pl
 Allow: /cs
+Allow: /bn
 Disallow: /api/
 Disallow: /sw.js
 Disallow: /manifest.json

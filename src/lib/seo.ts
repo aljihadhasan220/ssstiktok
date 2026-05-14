@@ -38,7 +38,7 @@ export const SEO_DATA: Record<LangCode, SeoMetadata> = {
   en: {
     title: "SSSTikPro – TikTok Video Downloader Without Watermark",
     description: "Download TikTok videos without watermark in HD quality using SSSTikPro. Fast, secure, unlimited, and free TikTok downloader for all devices.",
-    keywords: "TikTok downloader, TikTok video downloader, TikTok without watermark, HD TikTok downloader, TikTok MP4 downloader, SSSTikPro",
+    keywords: "TikTok downloader, TikTok video downloader, TikTok slideshow downloader, TikTok photo downloader, TikTok without watermark, HD TikTok downloader, TikTok MP4 downloader, SSSTikPro",
     faq: [
       { q: "How to download TikTok videos?", a: "Simply copy the TikTok video link, paste it into our input field at the top of the page, and click 'Download'." },
       { q: "Is SSSTikPro free?", a: "Yes, our service is 100% free to use. We don't charge any fees for downloading TikTok videos." },

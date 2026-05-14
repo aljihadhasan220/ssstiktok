@@ -67,11 +67,11 @@ export const Footer = memo(({ onNavigate }: { onNavigate: (s: Screen) => void })
         <span className="text-xl font-bold italic tracking-tighter">SSSTikPro</span>
       </div>
       <div className="flex flex-wrap justify-center gap-x-12 gap-y-4 text-[11px] font-black tracking-[0.2em] uppercase text-[var(--text-dim)]">
-        <button onClick={() => onNavigate('about')} className="hover:text-neon-blue transition-colors">About</button>
-        <button onClick={() => onNavigate('blog')} className="hover:text-neon-blue transition-colors">Blog</button>
-        <button onClick={() => onNavigate('privacy')} className="hover:text-neon-blue transition-colors">Privacy Policy</button>
-        <button onClick={() => onNavigate('terms')} className="hover:text-neon-blue transition-colors">Terms</button>
-        <button onClick={() => onNavigate('contact')} className="hover:text-neon-blue transition-colors">Contact</button>
+        <button onClick={() => onNavigate('about')} title="About SSSTikPro" className="hover:text-neon-blue transition-colors">About</button>
+        <button onClick={() => onNavigate('blog')} title="SSSTikPro Blog" className="hover:text-neon-blue transition-colors">Blog</button>
+        <button onClick={() => onNavigate('privacy')} title="Privacy Policy" className="hover:text-neon-blue transition-colors">Privacy Policy</button>
+        <button onClick={() => onNavigate('terms')} title="Terms of Service" className="hover:text-neon-blue transition-colors">Terms</button>
+        <button onClick={() => onNavigate('contact')} title="Contact Support" className="hover:text-neon-blue transition-colors">Contact</button>
       </div>
       <p className="text-[10px] text-[var(--text-dim)] uppercase tracking-[0.3em] font-black">
         &copy; 2026 SSSTikPro. <span className="hidden sm:inline">All rights reserved.</span>
