@@ -107,7 +107,7 @@ const FeatureCard = ({ icon: Icon, title, description }: any) => (
 );
 
 const FeaturesSection = ({ features }: { features: SeoMetadata['features'] }) => (
-  <section className="py-20 px-6 max-w-5xl mx-auto">
+  <section id="features" className="py-20 px-6 max-w-5xl mx-auto">
     <h2 className="text-3xl font-bold text-center mb-12 neo-text-gradient">Premium Features</h2>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       <FeatureCard icon={ShieldCheck} title={features[0].title} description={features[0].description} />
@@ -121,7 +121,7 @@ const FeaturesSection = ({ features }: { features: SeoMetadata['features'] }) =>
 );
 
 const HowItWorks = ({ content }: { content: SeoMetadata['howItWorks'] }) => (
-  <section className="py-20 px-6 bg-white/[0.02]">
+  <section id="how-it-works" className="py-20 px-6 bg-white/[0.02]">
     <div className="max-w-4xl mx-auto">
       <h2 className="text-3xl font-bold text-center mb-16 neo-text-gradient">How It Works</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
@@ -146,7 +146,7 @@ const HowItWorks = ({ content }: { content: SeoMetadata['howItWorks'] }) => (
 );
 
 const WhyChoose = ({ content }: { content: SeoMetadata['whyChoose'] }) => (
-  <section className="py-20 px-6 max-w-4xl mx-auto">
+  <section id="why-choose" className="py-20 px-6 max-w-4xl mx-auto">
     <h2 className="text-3xl font-bold text-center mb-12 neo-text-gradient">{content.title}</h2>
     <div className="glass rounded-[40px] p-10 border-white/5 space-y-8 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-32 h-32 neo-gradient opacity-5 blur-[80px] -mr-10 -mt-10" />
@@ -194,7 +194,7 @@ const FAQ = ({ faqs }: { faqs: SeoMetadata['faq'] }) => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="py-20 px-6 max-w-3xl mx-auto">
+    <section id="faq" className="py-20 px-6 max-w-3xl mx-auto">
       <h2 className="text-3xl font-bold text-center mb-12 neo-text-gradient">FAQ</h2>
       <div className="space-y-4">
         {faqs.map((faq, i) => (
@@ -227,7 +227,7 @@ const FAQ = ({ faqs }: { faqs: SeoMetadata['faq'] }) => {
 };
 
 const SEOContent = ({ content }: { content: SeoMetadata['seoContent'] }) => (
-  <section className="py-20 px-6 max-w-4xl mx-auto opacity-70">
+  <section id="about-downloader" className="py-20 px-6 max-w-4xl mx-auto opacity-70">
     <div className="space-y-12">
       <div className="space-y-4">
         <h2 className="text-2xl font-bold text-[var(--text-main)]">{content.h2}</h2>
@@ -682,28 +682,35 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
       {/* Input */}
       <GlassCard className="mx-4 border-white/5 shadow-2xl">
         <div className="space-y-4">
-          <div className="relative group">
-            <input
-              type="text"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="Insert a TikTok link here..."
-              className="w-full bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-2xl py-6 pl-14 pr-24 text-sm focus:outline-none focus:border-neon-purple/50 focus:ring-4 focus:ring-neon-purple/10 transition-all placeholder:text-[var(--text-dim)]"
-            />
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-dim)]" />
-            <button 
-              onClick={handlePaste}
-              className="absolute right-4 top-1/2 -translate-y-1/2 px-4 py-2.5 glass rounded-xl text-[10px] font-bold uppercase tracking-wider hover:bg-[var(--glass-bg)] transition-colors border-[var(--glass-border)]"
-            >
-              Paste
-            </button>
-          </div>
+            <div className="relative group">
+              <input
+                type="text"
+                id="tiktok-url-input"
+                name="tiktok-url"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="Insert a TikTok link here..."
+                aria-label="Paste TikTok video URL here"
+                className="w-full bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-2xl py-6 pl-14 pr-24 text-sm focus:outline-none focus:border-neon-purple/50 focus:ring-4 focus:ring-neon-purple/10 transition-all placeholder:text-[var(--text-dim)]"
+              />
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--text-dim)]" />
+              <button 
+                title="Paste URL from clipboard"
+                aria-label="Paste from clipboard"
+                onClick={handlePaste}
+                className="absolute right-4 top-1/2 -translate-y-1/2 px-4 py-2.5 glass rounded-xl text-[10px] font-bold uppercase tracking-wider hover:bg-[var(--glass-bg)] transition-colors border-[var(--glass-border)]"
+              >
+                Paste
+              </button>
+            </div>
 
-          <NeoButton 
-            className="w-full py-5 rounded-[22px] text-lg"
-            onClick={() => handleAnalyze()}
-            disabled={isAnalyzing}
-          >
+            <NeoButton 
+              title="Download TikTok Video"
+              aria-label="Start analysis and download"
+              className="w-full py-5 rounded-[22px] text-lg"
+              onClick={() => handleAnalyze()}
+              disabled={isAnalyzing}
+            >
             {isAnalyzing ? (
               <div className="flex items-center gap-3">
                 <RefreshCw className="w-5 h-5 animate-spin" />
@@ -837,8 +844,8 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                       </div>
                    </div>
                 ) : (
-                  <div className="relative w-full sm:w-32 aspect-[9/16] rounded-2xl overflow-hidden bg-black/40 group">
-                    <img src={result.thumbnail} alt="Preview" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="relative w-full sm:w-32 aspect-[4/5] sm:aspect-[9/16] rounded-2xl overflow-hidden bg-black/40 group">
+                    <img src={result.thumbnail} alt={`TikTok video preview by ${result.author.id}`} title="TikTok Preview" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                     <div className="absolute bottom-2 left-2 flex items-center gap-1">
                       <div className="px-1.5 py-0.5 glass rounded-[4px] text-[8px] font-black tracking-tighter bg-neon-blue text-black border-none">ULTRA HD</div>
@@ -849,7 +856,7 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                 <div className="flex-1 space-y-4 py-1">
                   <div className="flex items-center gap-3">
                     <div className="relative">
-                      <img src={result.author.avatar} className="w-10 h-10 rounded-full border-2 border-white/10" alt="avatar" />
+                      <img src={result.author.avatar} className="w-10 h-10 rounded-full border-2 border-white/10" alt={`Author ${result.author.id}`} title={result.author.id} />
                       <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-neon-blue rounded-full flex items-center justify-center p-0.5 border-2 border-[var(--bg-color)]">
                         <CheckCircle2 className="w-full h-full text-black" />
                       </div>
@@ -881,6 +888,8 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                     <div className="group relative">
                       <div className="absolute -inset-0.5 neo-gradient rounded-[20px] blur opacity-40 group-hover:opacity-100 transition duration-1000"></div>
                       <NeoButton 
+                        title="Download current slide image"
+                        aria-label="Download slide"
                         className="w-full bg-[var(--bg-color)] !shadow-none py-4 border-none text-sm tracking-widest font-black"
                         onClick={() => handleDownloadSlide(result.images![currentSlide])}
                       >
@@ -889,6 +898,8 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <NeoButton 
+                        title="Download full slideshow as MP4 video"
+                        aria-label="Download as video"
                         variant="outline" 
                         className="py-4 text-[10px] sm:text-xs tracking-widest border-[var(--glass-border)] font-black uppercase text-[var(--text-main)]/80"
                         onClick={() => addDownload(result, 'hd')}
@@ -896,6 +907,8 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                         DOWNLOAD AS VIDEO
                       </NeoButton>
                       <NeoButton 
+                        title="Download TikTok video audio as MP3"
+                        aria-label="Download MP3"
                         variant="ghost" 
                         className="py-4 text-[10px] sm:text-xs tracking-widest glass font-black uppercase text-[var(--text-main)]/80"
                         onClick={() => addDownload(result, 'mp3')}
@@ -909,6 +922,8 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                     <div className="group relative">
                       <div className="absolute -inset-0.5 neo-gradient rounded-[20px] blur opacity-40 group-hover:opacity-100 transition duration-1000"></div>
                       <NeoButton 
+                        title="Download TikTok video in high definition"
+                        aria-label="Download HD video"
                         className="w-full bg-[var(--bg-color)] !shadow-none py-4 border-none text-sm tracking-widest font-black"
                         onClick={() => addDownload(result, 'hd')}
                       >
@@ -917,6 +932,8 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <NeoButton 
+                        title="Download TikTok video without watermark"
+                        aria-label="Download without watermark"
                         variant="outline" 
                         className="py-4 text-[10px] sm:text-xs tracking-widest border-[var(--glass-border)] font-black uppercase text-[var(--text-main)]/80"
                         onClick={() => addDownload(result, 'nowm')}
@@ -924,6 +941,8 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                         NO WATERMARK
                       </NeoButton>
                       <NeoButton 
+                        title="Download TikTok video audio"
+                        aria-label="Download MP3"
                         variant="ghost" 
                         className="py-4 text-[10px] sm:text-xs tracking-widest glass font-black uppercase text-[var(--text-main)]/80"
                         onClick={() => addDownload(result, 'mp3')}
@@ -1370,14 +1389,20 @@ const MainApp = () => {
         <meta property="og:description" content={seo.description} />
         <meta property="og:url" content={currentUrl} />
         <meta property="og:site_name" content={APP_NAME} />
+        <meta property="og:locale" content={currentLang === 'en' ? 'en_US' : currentLang} />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://ssstikpro.site/android-chrome-512x512.png" />
+        <meta property="og:image" content="https://ssstikpro.site/og-image.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="SSSTikPro TikTok Video Downloader" />
         
         {/* Twitter Tags */}
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@ssstikpro" />
+        <meta name="twitter:creator" content="@ssstikpro" />
         <meta name="twitter:title" content={seo.title} />
         <meta name="twitter:description" content={seo.description} />
-        <meta name="twitter:image" content="https://ssstikpro.site/android-chrome-512x512.png" />
+        <meta name="twitter:image" content="https://ssstikpro.site/og-image.png" />
 
         {/* Structured Data: WebSite & Organization */}
         <script type="application/ld+json">

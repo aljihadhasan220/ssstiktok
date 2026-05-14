@@ -13,5 +13,8 @@ Allow: /ar
 Allow: /ms
 Allow: /pl
 Allow: /cs
+Disallow: /api/
+Disallow: /sw.js
+Disallow: /manifest.json
 
 Sitemap: https://ssstikpro.site/sitemap.xml
