@@ -52,6 +52,7 @@ async function startServer() {
       res.setHeader("Content-Disposition", `attachment; filename="${filename.replace(/[^\x20-\x7E]/g, '').replace(/"/g, '')}"`);
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Cache-Control", "public, max-age=3600");
+      res.setHeader("X-Content-Type-Options", "nosniff");
       
       if (contentLength && contentLength !== "0") {
         res.setHeader("Content-Length", contentLength);
@@ -61,11 +62,19 @@ async function startServer() {
         throw new Error("No response body");
       }
 
-      // Stream the response
-      // @ts-ignore
-      Readable.fromWeb(response.body).pipe(res);
+      // Robust streaming compatible with both Node and Web Streams
+      const reader = response.body.getReader();
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          res.write(value);
+        }
+      } finally {
+        res.end();
+      }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("Proxy error:", error);
       if (!res.headersSent) {
         res.status(500).send("Error downloading content");
@@ -73,42 +82,35 @@ async function startServer() {
     }
   };
 
-  // Unified Proxy endpoints to prevent 404s and handle legacy routes
-  app.get("/api/proxy*", handleProxy);
+  // Explicit Proxy endpoints to avoid routing ambiguities in production
+  app.get("/api/proxy", handleProxy);
   app.get("/api/proxy-image", handleProxy);
   app.get("/api/proxy-video", handleProxy);
 
   // API placeholders
   app.get("/api/health", (req, res) => {
-    res.json({ status: "ok" });
-  });
-
-  // HTTPS Redirect middleware (for production)
-  if (process.env.NODE_ENV === "production") {
-    app.enable('trust proxy');
-    app.use((req, res, next) => {
-      if (req.headers['x-forwarded-proto'] !== 'https') {
-        return res.redirect(301, 'https://' + req.hostname + req.originalUrl);
-      }
-      next();
+    res.json({ 
+      status: "ok", 
+      env: process.env.NODE_ENV,
+      version: "1.0.2",
+      timestamp: new Date().toISOString()
     });
-  }
+  });
 
   // Production: serve static files and handle SPA fallback
   if (process.env.NODE_ENV === "production") {
-    // In production, server.cjs is in dist/, so assets are in the same folder or parent
-    // However, process.cwd() is consistent in the container.
-    // We'll use a path relative to the root of the project to be safe.
     const distPath = path.join(process.cwd(), 'dist');
     
+    // Serve static files from dist
     app.use(express.static(distPath, {
       maxAge: '1d',
       index: 'index.html'
     }));
     
+    // SPA Fallback - Only for non-API routes
     app.get('*', (req, res) => {
       if (req.path.startsWith('/api/')) {
-        return res.status(404).send('API route not found');
+        return res.status(404).json({ error: 'API route not found', path: req.path });
       }
       res.sendFile(path.join(distPath, 'index.html'));
     });

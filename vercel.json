@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/api/proxy", "destination": "/api/proxy.ts" },
+    { "source": "/api/proxy-image", "destination": "/api/proxy.ts" },
+    { "source": "/api/proxy-video", "destination": "/api/proxy.ts" },
+    { "source": "/api/health", "destination": "/api/health.ts" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
