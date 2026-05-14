@@ -4,6 +4,10 @@ import { TikTokVideo } from '../types';
  * SSSTikTok API Service
  * Robust implementation with URL validation and error simulation.
  */
+// Simple in-memory cache
+const apiCache = new Map<string, { data: TikTokVideo, timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 export const TikTokApiService = {
   validateUrl: (url: string): boolean => {
     return /https?:\/\/(?:[a-z]{2}\.)?(?:tiktok\.com|douyin\.com)\/[a-zA-Z0-9_.\/]+/gm.test(url);
@@ -17,6 +21,12 @@ export const TikTokApiService = {
   analyzeUrl: async (url: string): Promise<TikTokVideo> => {
     if (!TikTokApiService.validateUrl(url)) {
       throw new Error('Please provide a valid TikTok link.');
+    }
+
+    // Check cache
+    const cached = apiCache.get(url);
+    if (cached && (Date.now() - cached.timestamp < CACHE_TTL)) {
+      return cached.data;
     }
 
     try {
@@ -44,7 +54,7 @@ export const TikTokApiService = {
 
       const data = result.data;
 
-      return {
+      const videoData: TikTokVideo = {
         id: data.id,
         url: url,
         author: {
@@ -70,6 +80,11 @@ export const TikTokApiService = {
         images: data.images || [],
         isSlideshow: !!(data.images && data.images.length > 0)
       };
+
+      // Save to cache
+      apiCache.set(url, { data: videoData, timestamp: Date.now() });
+
+      return videoData;
     } catch (error: any) {
       console.error('API Error:', error);
       throw new Error(error.message || 'An error occurred while analyzing the URL.');

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Home, 
@@ -94,8 +94,8 @@ const GlassCard = ({ children, className = "" }: any) => (
 
 // --- Screens ---
 
-const FeatureCard = ({ icon: Icon, title, description }: any) => (
-  <div className="glass p-8 rounded-3xl border border-white/5 hover:border-neon-purple/30 group transition-all duration-500 hover:-translate-y-2">
+const FeatureCard = React.memo(({ icon: Icon, title, description }: any) => (
+  <div className="glass p-8 rounded-3xl border border-white/5 hover:border-neon-purple/30 group transition-all duration-500 hover:-translate-y-2 will-change-transform">
     <div className="w-12 h-12 rounded-2xl neo-gradient flex items-center justify-center p-0.5 mb-6 shadow-lg shadow-neon-purple/10">
       <div className="w-full h-full bg-[var(--bg-color)] rounded-2xl flex items-center justify-center text-neon-blue">
         <Icon className="w-6 h-6" />
@@ -104,9 +104,9 @@ const FeatureCard = ({ icon: Icon, title, description }: any) => (
     <h3 className="text-xl font-bold mb-3 tracking-tight">{title}</h3>
     <p className="text-sm text-[var(--text-dim)] leading-relaxed">{description}</p>
   </div>
-);
+));
 
-const FeaturesSection = ({ features }: { features: SeoMetadata['features'] }) => (
+const FeaturesSection = React.memo(({ features }: { features: SeoMetadata['features'] }) => (
   <section id="features" className="py-20 px-6 max-w-5xl mx-auto">
     <h2 className="text-3xl font-bold text-center mb-12 neo-text-gradient">Premium Features</h2>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -118,9 +118,9 @@ const FeaturesSection = ({ features }: { features: SeoMetadata['features'] }) =>
       <FeatureCard icon={CheckCircle2} title={features[5].title} description={features[5].description} />
     </div>
   </section>
-);
+));
 
-const HowItWorks = ({ content }: { content: SeoMetadata['howItWorks'] }) => (
+const HowItWorks = React.memo(({ content }: { content: SeoMetadata['howItWorks'] }) => (
   <section id="how-it-works" className="py-20 px-6 bg-white/[0.02]">
     <div className="max-w-4xl mx-auto">
       <h2 className="text-3xl font-bold text-center mb-16 neo-text-gradient">How It Works</h2>
@@ -143,9 +143,9 @@ const HowItWorks = ({ content }: { content: SeoMetadata['howItWorks'] }) => (
       </div>
     </div>
   </section>
-);
+));
 
-const WhyChoose = ({ content }: { content: SeoMetadata['whyChoose'] }) => (
+const WhyChoose = React.memo(({ content }: { content: SeoMetadata['whyChoose'] }) => (
   <section id="why-choose" className="py-20 px-6 max-w-4xl mx-auto">
     <h2 className="text-3xl font-bold text-center mb-12 neo-text-gradient">{content.title}</h2>
     <div className="glass rounded-[40px] p-10 border-white/5 space-y-8 relative overflow-hidden">
@@ -188,9 +188,10 @@ const WhyChoose = ({ content }: { content: SeoMetadata['whyChoose'] }) => (
       </div>
     </div>
   </section>
-);
+));
 
-const FAQ = ({ faqs }: { faqs: SeoMetadata['faq'] }) => {
+
+const FAQ = React.memo(({ faqs }: { faqs: SeoMetadata['faq'] }) => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
@@ -224,9 +225,9 @@ const FAQ = ({ faqs }: { faqs: SeoMetadata['faq'] }) => {
       </div>
     </section>
   );
-};
+});
 
-const SEOContent = ({ content }: { content: SeoMetadata['seoContent'] }) => (
+const SEOContent = React.memo(({ content }: { content: SeoMetadata['seoContent'] }) => (
   <section id="about-downloader" className="py-20 px-6 max-w-4xl mx-auto opacity-70">
     <div className="space-y-12">
       <div className="space-y-4">
@@ -247,7 +248,8 @@ const SEOContent = ({ content }: { content: SeoMetadata['seoContent'] }) => (
       </div>
     </div>
   </section>
-);
+));
+
 
 const PageWrapper = ({ title, children, onBack }: { title: string, children: React.ReactNode, onBack: () => void }) => (
   <motion.div 
@@ -531,7 +533,7 @@ const SettingsScreen = ({ settings, setSettings, addToast, onBack }: {
   );
 };
 
-const Footer = ({ onNavigate }: { onNavigate: (s: Screen) => void }) => (
+const Footer = React.memo(({ onNavigate }: { onNavigate: (s: Screen) => void }) => (
   <footer className="py-16 px-6 border-t border-white/5 bg-black/20">
     <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
       <div className="flex items-center gap-3 cursor-pointer" onClick={() => onNavigate('home')}>
@@ -554,7 +556,8 @@ const Footer = ({ onNavigate }: { onNavigate: (s: Screen) => void }) => (
       </p>
     </div>
   </footer>
-);
+));
+
 
 const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzing }: { 
   addDownload: (video: TikTokVideo, type: any) => void, 
@@ -568,7 +571,7 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
   const [error, setError] = useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const handleDownloadSlide = (imageUrl: string) => {
+  const handleDownloadSlide = useCallback((imageUrl: string) => {
     const filename = `ssstikpro-slide-${currentSlide + 1}.jpg`;
     const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(imageUrl)}&filename=${encodeURIComponent(filename)}`;
     
@@ -579,7 +582,7 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
     link.click();
     document.body.removeChild(link);
     addToast("Downloading slide...");
-  };
+  }, [currentSlide, addToast]);
 
   // Auto Paste Logic
   useEffect(() => {
@@ -614,7 +617,7 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
     }
   }, [settings.autoPaste]);
 
-  const handlePaste = async () => {
+  const handlePaste = useCallback(async () => {
     try {
       let text = '';
       if (Capacitor.isNativePlatform()) {
@@ -633,9 +636,9 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
       // Fail silently if access is blocked, user can still type
       console.warn("Clipboard access blocked");
     }
-  };
+  }, [addToast]);
 
-  const handleAnalyze = async (manualUrl?: string) => {
+  const handleAnalyze = useCallback(async (manualUrl?: string) => {
     const targetUrl = manualUrl || url;
     if (!targetUrl.trim()) {
       addToast("Please enter a URL first", 'error');
@@ -657,7 +660,7 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
     } finally {
       setIsAnalyzing(false);
     }
-  };
+  }, [url, addToast, setIsAnalyzing]);
 
   return (
     <div className="flex flex-col gap-8 max-w-lg mx-auto">
@@ -799,8 +802,10 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                           }}
                           src={result.images[currentSlide]} 
                           alt={`Slide ${currentSlide + 1}`} 
-                          className="w-full h-full object-cover cursor-grab active:cursor-grabbing" 
+                          className="w-full h-full object-cover cursor-grab active:cursor-grabbing will-change-transform" 
                           draggable={false}
+                          loading="eager"
+                          decoding="async"
                         />
                       </AnimatePresence>
                       
@@ -845,7 +850,7 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                    </div>
                 ) : (
                   <div className="relative w-full sm:w-32 aspect-[4/5] sm:aspect-[9/16] rounded-2xl overflow-hidden bg-black/40 group">
-                    <img src={result.thumbnail} alt={`TikTok video preview by ${result.author.id}`} title="TikTok Preview" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <img src={result.thumbnail} alt={`TikTok video preview by ${result.author.id}`} title="TikTok Preview" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="eager" decoding="async" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                     <div className="absolute bottom-2 left-2 flex items-center gap-1">
                       <div className="px-1.5 py-0.5 glass rounded-[4px] text-[8px] font-black tracking-tighter bg-neon-blue text-black border-none">ULTRA HD</div>
@@ -980,7 +985,7 @@ const ProcessingModal = ({ isOpen }: { isOpen: boolean }) => (
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className="relative w-full max-w-xs glass border-white/10 rounded-[40px] p-10 shadow-2xl text-center space-y-8 overflow-hidden"
+          className="relative w-full max-w-xs glass border-white/10 rounded-[40px] p-10 shadow-2xl text-center space-y-8 overflow-hidden will-change-[transform,opacity]"
         >
           <div className="relative">
             <div className="w-24 h-24 rounded-[32px] neo-gradient mx-auto flex items-center justify-center shadow-[0_0_50px_-10px_var(--neon-purple)] animate-pulse">
@@ -1233,7 +1238,7 @@ const MainApp = () => {
     }
   }, [location.pathname]);
 
-  const handleNavigate = (s: Screen) => {
+  const handleNavigate = useCallback((s: Screen) => {
     if (s === 'home') {
       navigate(currentLang === 'en' ? '/' : `/${currentLang}`);
       setActiveScreen('home');
@@ -1242,7 +1247,7 @@ const MainApp = () => {
       setActiveScreen(s);
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  }, [navigate, currentLang]);
 
   const [tasks, setTasks] = useState<DownloadTask[]>([]);
   const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
@@ -1296,12 +1301,12 @@ const MainApp = () => {
     root.style.setProperty('--neon-blue', settings.palette.secondary);
   }, [settings.palette]);
 
-  const addToast = (message: string, type: 'success' | 'error' = 'success') => {
+  const addToast = useCallback((message: string, type: 'success' | 'error' = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3500);
-  };
+  }, []);
 
-  const addDownloadTask = async (video: TikTokVideo, type: 'hd' | 'nowm' | 'mp3') => {
+  const addDownloadTask = useCallback(async (video: TikTokVideo, type: 'hd' | 'nowm' | 'mp3') => {
     const taskId = `${video.id}-${type}-${Date.now()}`;
     const newTask: DownloadTask = {
       id: taskId,
@@ -1335,7 +1340,7 @@ const MainApp = () => {
     } catch (e) {
       addToast(`Failed to download ${type.toUpperCase()}`, 'error');
     }
-  };
+  }, [addToast]);
 
   const canonicalUrl = currentLang === 'en' ? 'https://ssstikpro.site' : `https://ssstikpro.site/${currentLang}`;
   const currentUrl = activeScreen === 'home' ? canonicalUrl : `https://ssstikpro.site/${activeScreen}`;
@@ -1532,7 +1537,7 @@ const MainApp = () => {
           }}
           transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
           style={{ background: 'var(--bg-glow-purple)' }}
-          className="absolute -top-[20%] -left-[10%] w-[100vw] h-[100vw] rounded-full blur-[140px]" 
+          className="absolute -top-[20%] -left-[10%] w-[100vw] h-[100vw] rounded-full blur-[140px] will-change-[transform,filter]" 
         />
         <motion.div 
           animate={{ 
@@ -1543,7 +1548,7 @@ const MainApp = () => {
           }}
           transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
           style={{ background: 'var(--bg-glow-blue)' }}
-          className="absolute top-[30%] -right-[20%] w-[120vw] h-[120vw] rounded-full blur-[160px]" 
+          className="absolute top-[30%] -right-[20%] w-[120vw] h-[120vw] rounded-full blur-[160px] will-change-[transform,filter]" 
         />
       </div>
 
