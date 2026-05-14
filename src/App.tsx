@@ -571,17 +571,48 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
   const [error, setError] = useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const handleDownloadSlide = useCallback((imageUrl: string) => {
+  const handleDownloadSlide = useCallback(async (imageUrl: string) => {
     const filename = `ssstikpro-slide-${currentSlide + 1}.jpg`;
     const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(imageUrl)}&filename=${encodeURIComponent(filename)}`;
     
-    const link = document.createElement('a');
-    link.href = proxyUrl;
-    link.setAttribute('download', filename);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    addToast("Downloading slide...");
+    try {
+      addToast("Downloading slide...");
+      
+      const response = await fetch(proxyUrl);
+      if (!response.ok) throw new Error('Download failed');
+      
+      const blob = await response.blob();
+      if (blob.size === 0) throw new Error('Empty file received');
+      
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      
+      // Cleanup
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    } catch (e) {
+      console.error('Download error:', e);
+      addToast("Failed to download image", 'error');
+      
+      // Fallback: Try direct link if proxy fails (might hit CORS but worth a shot as last resort)
+      try {
+        const link = document.createElement('a');
+        link.href = imageUrl;
+        link.target = '_blank';
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (err) {
+        console.error('Fallback failed:', err);
+      }
+    }
   }, [currentSlide, addToast]);
 
   // Auto Paste Logic
@@ -778,12 +809,12 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="mx-4"
+            className="mx-auto w-[92%] sm:w-full sm:mx-4"
           >
-            <GlassCard className="!p-5 border-white/10 bg-white/[0.03]">
-              <div className="flex flex-col sm:flex-row gap-5">
+            <GlassCard className="!p-4 sm:!p-5 border-white/10 bg-white/[0.03]">
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
                 {result.isSlideshow && result.images ? (
-                   <div className="relative w-full sm:w-48 aspect-[4/5] sm:aspect-[9/16] rounded-2xl overflow-hidden bg-black/40 group select-none">
+                   <div className="relative w-full sm:w-48 aspect-[1/1] sm:aspect-[9/16] rounded-2xl overflow-hidden bg-black/40 group select-none">
                       <AnimatePresence mode="wait">
                         <motion.img 
                           key={currentSlide}
@@ -844,12 +875,12 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                         ))}
                       </div>
 
-                      <div className="absolute top-3 left-3 px-2 py-1 glass rounded-lg text-[9px] font-black tracking-tighter bg-neon-purple text-white border-none uppercase shadow-lg">
+                      <div className="absolute top-3 left-3 px-2 py-1 glass rounded-lg text-[8px] sm:text-[9px] font-black tracking-tighter bg-neon-purple text-white border-none uppercase shadow-lg">
                         PHOTO {currentSlide + 1} / {result.images.length}
                       </div>
                    </div>
                 ) : (
-                  <div className="relative w-full sm:w-32 aspect-[4/5] sm:aspect-[9/16] rounded-2xl overflow-hidden bg-black/40 group">
+                  <div className="relative w-full sm:w-32 aspect-[1/1] sm:aspect-[9/16] rounded-2xl overflow-hidden bg-black/40 group">
                     <img src={result.thumbnail} alt={`TikTok video preview by ${result.author.id}`} title="TikTok Preview" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="eager" decoding="async" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                     <div className="absolute bottom-2 left-2 flex items-center gap-1">
@@ -858,36 +889,36 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                   </div>
                 )}
                 
-                <div className="flex-1 space-y-4 py-1">
-                  <div className="flex items-center gap-3">
+                <div className="flex-1 space-y-3 sm:space-y-4 py-1">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <div className="relative">
-                      <img src={result.author.avatar} className="w-10 h-10 rounded-full border-2 border-white/10" alt={`Author ${result.author.id}`} title={result.author.id} />
-                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-neon-blue rounded-full flex items-center justify-center p-0.5 border-2 border-[var(--bg-color)]">
+                      <img src={result.author.avatar} className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-white/10" alt={`Author ${result.author.id}`} title={result.author.id} />
+                      <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 sm:w-4 sm:h-4 bg-neon-blue rounded-full flex items-center justify-center p-0.5 border-2 border-[var(--bg-color)]">
                         <CheckCircle2 className="w-full h-full text-black" />
                       </div>
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs font-bold truncate tracking-tight text-[var(--text-main)]">{result.author.id}</p>
-                      <p className="text-[10px] text-[var(--text-dim)] truncate font-bold uppercase tracking-wider">Verified Identity</p>
+                      <p className="text-[11px] sm:text-xs font-bold truncate tracking-tight text-[var(--text-main)]">{result.author.id}</p>
+                      <p className="text-[9px] sm:text-[10px] text-[var(--text-dim)] truncate font-bold uppercase tracking-wider">Verified Identity</p>
                     </div>
                   </div>
                   
-                  <p className="text-[11px] text-[var(--text-main)]/70 line-clamp-4 leading-relaxed font-medium">
+                  <p className="text-[10px] sm:text-[11px] text-[var(--text-main)]/70 line-clamp-3 sm:line-clamp-4 leading-relaxed font-medium">
                     {result.description}
                   </p>
 
-                  <div className="flex flex-wrap gap-2">
-                    <div className="px-2 py-1 glass rounded-lg text-[9px] font-bold text-[var(--text-dim)] flex items-center gap-1">
-                      <Heart className="w-3 h-3 text-neon-pink" /> {result.stats.likes}
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                    <div className="px-2 py-1 glass rounded-lg text-[8px] sm:text-[9px] font-bold text-[var(--text-dim)] flex items-center gap-1">
+                      <Heart className="w-2.5 h-2.5 sm:w-3 h-3 text-neon-pink" /> {result.stats.likes}
                     </div>
-                    <div className="px-2 py-1 glass rounded-lg text-[9px] font-bold text-[var(--text-dim)] flex items-center gap-1">
-                      <Share2 className="w-3 h-3 text-neon-blue" /> {result.stats.shares}
+                    <div className="px-2 py-1 glass rounded-lg text-[8px] sm:text-[9px] font-bold text-[var(--text-dim)] flex items-center gap-1">
+                      <Share2 className="w-2.5 h-2.5 sm:w-3 h-3 text-neon-blue" /> {result.stats.shares}
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-8 grid grid-cols-1 gap-3">
+              <div className="mt-6 sm:mt-8 grid grid-cols-1 gap-2.5 sm:gap-3">
                 {result.isSlideshow ? (
                   <>
                     <div className="group relative">
@@ -895,18 +926,18 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                       <NeoButton 
                         title="Download current slide image"
                         aria-label="Download slide"
-                        className="w-full bg-[var(--bg-color)] !shadow-none py-4 border-none text-sm tracking-widest font-black"
+                        className="w-full bg-[var(--bg-color)] !shadow-none py-3.5 sm:py-4 border-none text-xs sm:text-sm tracking-widest font-black"
                         onClick={() => handleDownloadSlide(result.images![currentSlide])}
                       >
                         DOWNLOAD THIS SLIDE
                       </NeoButton>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
                       <NeoButton 
                         title="Download full slideshow as MP4 video"
                         aria-label="Download as video"
                         variant="outline" 
-                        className="py-4 text-[10px] sm:text-xs tracking-widest border-[var(--glass-border)] font-black uppercase text-[var(--text-main)]/80"
+                        className="py-3.5 sm:py-4 text-[9px] sm:text-xs tracking-widest border-[var(--glass-border)] font-black uppercase text-[var(--text-main)]/80"
                         onClick={() => addDownload(result, 'hd')}
                       >
                         DOWNLOAD AS VIDEO
@@ -915,7 +946,7 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                         title="Download TikTok video audio as MP3"
                         aria-label="Download MP3"
                         variant="ghost" 
-                        className="py-4 text-[10px] sm:text-xs tracking-widest glass font-black uppercase text-[var(--text-main)]/80"
+                        className="py-3.5 sm:py-4 text-[9px] sm:text-xs tracking-widest glass font-black uppercase text-[var(--text-main)]/80"
                         onClick={() => addDownload(result, 'mp3')}
                       >
                         DOWNLOAD MP3
@@ -929,18 +960,18 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                       <NeoButton 
                         title="Download TikTok video in high definition"
                         aria-label="Download HD video"
-                        className="w-full bg-[var(--bg-color)] !shadow-none py-4 border-none text-sm tracking-widest font-black"
+                        className="w-full bg-[var(--bg-color)] !shadow-none py-3.5 sm:py-4 border-none text-xs sm:text-sm tracking-widest font-black"
                         onClick={() => addDownload(result, 'hd')}
                       >
                         DOWNLOAD HD VIDEO
                       </NeoButton>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
                       <NeoButton 
                         title="Download TikTok video without watermark"
                         aria-label="Download without watermark"
                         variant="outline" 
-                        className="py-4 text-[10px] sm:text-xs tracking-widest border-[var(--glass-border)] font-black uppercase text-[var(--text-main)]/80"
+                        className="py-3.5 sm:py-4 text-[9px] sm:text-xs tracking-widest border-[var(--glass-border)] font-black uppercase text-[var(--text-main)]/80"
                         onClick={() => addDownload(result, 'nowm')}
                       >
                         NO WATERMARK
@@ -949,7 +980,7 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                         title="Download TikTok video audio"
                         aria-label="Download MP3"
                         variant="ghost" 
-                        className="py-4 text-[10px] sm:text-xs tracking-widest glass font-black uppercase text-[var(--text-main)]/80"
+                        className="py-3.5 sm:py-4 text-[9px] sm:text-xs tracking-widest glass font-black uppercase text-[var(--text-main)]/80"
                         onClick={() => addDownload(result, 'mp3')}
                       >
                         DOWNLOAD MP3

@@ -20,13 +20,23 @@ async function startServer() {
     }
 
     try {
-      const response = await fetch(imageUrl);
+      const response = await fetch(imageUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Referer': 'https://www.tiktok.com/'
+        }
+      });
+      
       if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`);
 
       const contentType = response.headers.get("content-type") || "image/jpeg";
+      const contentLength = response.headers.get("content-length");
       
       res.setHeader("Content-Type", contentType);
       res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+      if (contentLength) {
+        res.setHeader("Content-Length", contentLength);
+      }
       
       const arrayBuffer = await response.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
