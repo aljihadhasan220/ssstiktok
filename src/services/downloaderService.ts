@@ -41,7 +41,7 @@ export const TikTokDownloaderService = {
                         task.video.downloadUrls.mp3;
 
       const filename = task.fileName;
-      const proxyUrl = `/api/proxy-video?url=${encodeURIComponent(remoteUrl)}&filename=${encodeURIComponent(filename)}`;
+      const proxyUrl = `/api/proxy?url=${encodeURIComponent(remoteUrl)}&filename=${encodeURIComponent(filename)}`;
 
       // --- NATIVE ANDROID/IOS SAVING ---
       if (Capacitor.isNativePlatform()) {

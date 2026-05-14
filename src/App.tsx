@@ -573,16 +573,21 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
 
   const handleDownloadSlide = useCallback(async (imageUrl: string) => {
     const filename = `ssstikpro-slide-${currentSlide + 1}.jpg`;
-    const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(imageUrl)}&filename=${encodeURIComponent(filename)}`;
+    // Use the unified proxy route
+    const proxyUrl = `/api/proxy?url=${encodeURIComponent(imageUrl)}&filename=${encodeURIComponent(filename)}`;
     
     try {
       addToast("Downloading slide...");
       
       const response = await fetch(proxyUrl);
-      if (!response.ok) throw new Error('Download failed');
+      if (!response.ok) {
+        throw new Error(`Download failed: ${response.statusText}`);
+      }
       
       const blob = await response.blob();
-      if (blob.size === 0) throw new Error('Empty file received');
+      if (blob.size === 0 || blob.type.includes('html')) {
+        throw new Error('Invalid file received (likely a proxy error)');
+      }
       
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -597,10 +602,10 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
           document.body.removeChild(link);
         }
         window.URL.revokeObjectURL(url);
-      }, 200);
-    } catch (e) {
+      }, 500); // Increased timeout for reliability
+    } catch (e: any) {
       console.error('Download error:', e);
-      addToast("Failed to download image. Please try again.", 'error');
+      addToast(e.message || "Failed to download image", 'error');
     }
   }, [currentSlide, addToast]);
 

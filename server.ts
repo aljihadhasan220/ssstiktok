@@ -22,21 +22,30 @@ async function startServer() {
 
     try {
       const response = await fetch(targetUrl, {
+        method: "GET",
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
           'Referer': 'https://www.tiktok.com/',
-          'Accept': '*/*'
+          'Accept': '*/* -'
         }
       });
       
-      if (!response.ok) throw new Error(`Failed to fetch: ${response.statusText}`);
+      if (!response.ok) {
+        console.error(`Fetch failed for ${targetUrl}: ${response.status} ${response.statusText}`);
+        return res.status(response.status).send(`Failed to fetch from source: ${response.statusText}`);
+      }
 
       const contentType = response.headers.get("content-type") || "application/octet-stream";
       const contentLength = response.headers.get("content-length");
       
+      // Clear any default headers
+      res.removeHeader('X-Frame-Options');
+      
       res.setHeader("Content-Type", contentType);
-      res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
-      if (contentLength) {
+      res.setHeader("Content-Disposition", `attachment; filename="${filename.replace(/"/g, '')}"`);
+      res.setHeader("Access-Control-Allow-Origin", "*");
+      
+      if (contentLength && contentLength !== "0") {
         res.setHeader("Content-Length", contentLength);
       }
 
@@ -44,8 +53,7 @@ async function startServer() {
         throw new Error("No response body");
       }
 
-      // Stream the response directly to the client for maximum speed
-      // Using Readable.fromWeb for Node.js compatibility with fetch ReadableStream
+      // Stream the response
       // @ts-ignore
       Readable.fromWeb(response.body).pipe(res);
 
@@ -57,7 +65,8 @@ async function startServer() {
     }
   };
 
-  // Proxy endpoints
+  // Unified Proxy endpoints to prevent 404s
+  app.get("/api/proxy", handleProxy);
   app.get("/api/proxy-image", handleProxy);
   app.get("/api/proxy-video", handleProxy);
 
