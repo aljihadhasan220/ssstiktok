@@ -1,14 +1,23 @@
 {
   "name": "SSSTikPro",
   "short_name": "SSSTikPro",
+
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+
   "background_color": "#0b061f",
   "theme_color": "#0b061f",
 
   "orientation": "portrait",
+  "lang": "en",
   "id": "/",
-  "categories": ["video", "tools", "entertainment"],
+
+  "categories": [
+    "video",
+    "tools",
+    "entertainment"
+  ],
 
   "description": "Premium TikTok Video Downloader Without Watermark",
 
