@@ -10,6 +10,33 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
+  // Proxy endpoint for forcing image downloads
+  app.get("/api/proxy-image", async (req, res) => {
+    const imageUrl = req.query.url as string;
+    const filename = req.query.filename as string || "ssstikpro-slide.jpg";
+
+    if (!imageUrl) {
+      return res.status(400).send("URL is required");
+    }
+
+    try {
+      const response = await fetch(imageUrl);
+      if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`);
+
+      const contentType = response.headers.get("content-type") || "image/jpeg";
+      
+      res.setHeader("Content-Type", contentType);
+      res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+      
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      res.send(buffer);
+    } catch (error) {
+      console.error("Proxy error:", error);
+      res.status(500).send("Error downloading image");
+    }
+  });
+
   // API placeholders
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });

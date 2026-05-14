@@ -569,10 +569,12 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const handleDownloadSlide = (imageUrl: string) => {
-    // Basic implementation to trigger download of a single image
+    const filename = `ssstikpro-slide-${currentSlide + 1}.jpg`;
+    const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(imageUrl)}&filename=${encodeURIComponent(filename)}`;
+    
     const link = document.createElement('a');
-    link.href = imageUrl;
-    link.download = `tiktok_slide_${Date.now()}.jpg`;
+    link.href = proxyUrl;
+    link.setAttribute('download', filename);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -771,7 +773,7 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
             <GlassCard className="!p-5 border-white/10 bg-white/[0.03]">
               <div className="flex flex-col sm:flex-row gap-5">
                 {result.isSlideshow && result.images ? (
-                   <div className="relative w-full sm:w-48 aspect-[9/16] rounded-2xl overflow-hidden bg-black/40 group select-none">
+                   <div className="relative w-full sm:w-48 aspect-[4/5] sm:aspect-[9/16] rounded-2xl overflow-hidden bg-black/40 group select-none">
                       <AnimatePresence mode="wait">
                         <motion.img 
                           key={currentSlide}
