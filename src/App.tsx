@@ -12,6 +12,7 @@ import {
   MoreVertical,
   ArrowRight,
   ChevronRight,
+  ChevronLeft,
   Share2,
   Trash2,
   Moon,
@@ -565,6 +566,18 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
   const [url, setUrl] = useState('');
   const [result, setResult] = useState<TikTokVideo | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const handleDownloadSlide = (imageUrl: string) => {
+    // Basic implementation to trigger download of a single image
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = `tiktok_slide_${Date.now()}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    addToast("Downloading slide...");
+  };
 
   // Auto Paste Logic
   useEffect(() => {
@@ -634,6 +647,7 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
     try {
       const data = await TikTokApiService.analyzeUrl(targetUrl);
       setResult(data);
+      setCurrentSlide(0);
       addToast("Video analyzed successfully");
     } catch (err: any) {
       setError(err.message);
@@ -755,14 +769,81 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
             className="mx-4"
           >
             <GlassCard className="!p-5 border-white/10 bg-white/[0.03]">
-              <div className="flex gap-5">
-                <div className="relative w-32 aspect-[9/16] rounded-2xl overflow-hidden bg-black/40 group">
-                  <img src={result.thumbnail} alt="Preview" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                  <div className="absolute bottom-2 left-2 flex items-center gap-1">
-                    <div className="px-1.5 py-0.5 glass rounded-[4px] text-[8px] font-black tracking-tighter bg-neon-blue text-black border-none">ULTRA HD</div>
+              <div className="flex flex-col sm:flex-row gap-5">
+                {result.isSlideshow && result.images ? (
+                   <div className="relative w-full sm:w-48 aspect-[9/16] rounded-2xl overflow-hidden bg-black/40 group select-none">
+                      <AnimatePresence mode="wait">
+                        <motion.img 
+                          key={currentSlide}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: -20 }}
+                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                          drag="x"
+                          dragConstraints={{ left: 0, right: 0 }}
+                          onDragEnd={(_, info) => {
+                            if (info.offset.x < -50) {
+                              setCurrentSlide(prev => (prev < result.images!.length - 1 ? prev + 1 : 0));
+                            } else if (info.offset.x > 50) {
+                              setCurrentSlide(prev => (prev > 0 ? prev - 1 : result.images!.length - 1));
+                            }
+                          }}
+                          src={result.images[currentSlide]} 
+                          alt={`Slide ${currentSlide + 1}`} 
+                          className="w-full h-full object-cover cursor-grab active:cursor-grabbing" 
+                          draggable={false}
+                        />
+                      </AnimatePresence>
+                      
+                      {/* Navigation Controls */}
+                      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-3 pointer-events-none">
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCurrentSlide(prev => (prev > 0 ? prev - 1 : result.images!.length - 1));
+                          }}
+                          className="w-9 h-9 rounded-full glass border-white/10 flex items-center justify-center text-white pointer-events-auto hover:bg-white/20 transition-all opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0"
+                        >
+                          <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCurrentSlide(prev => (prev < result.images!.length - 1 ? prev + 1 : 0));
+                          }}
+                          className="w-9 h-9 rounded-full glass border-white/10 flex items-center justify-center text-white pointer-events-auto hover:bg-white/20 transition-all opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0"
+                        >
+                          <ChevronRight className="w-5 h-5" />
+                        </button>
+                      </div>
+
+                      {/* Pagination Dots */}
+                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 px-3 py-1.5 glass rounded-full border-white/5 backdrop-blur-md">
+                        {result.images.slice(0, 10).map((_, i) => (
+                          <button 
+                            key={i} 
+                            onClick={() => setCurrentSlide(i)}
+                            className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                              currentSlide === i ? 'bg-neon-blue w-4' : 'bg-white/20 hover:bg-white/40'
+                            }`} 
+                          />
+                        ))}
+                      </div>
+
+                      <div className="absolute top-3 left-3 px-2 py-1 glass rounded-lg text-[9px] font-black tracking-tighter bg-neon-purple text-white border-none uppercase shadow-lg">
+                        PHOTO {currentSlide + 1} / {result.images.length}
+                      </div>
+                   </div>
+                ) : (
+                  <div className="relative w-full sm:w-32 aspect-[9/16] rounded-2xl overflow-hidden bg-black/40 group">
+                    <img src={result.thumbnail} alt="Preview" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                    <div className="absolute bottom-2 left-2 flex items-center gap-1">
+                      <div className="px-1.5 py-0.5 glass rounded-[4px] text-[8px] font-black tracking-tighter bg-neon-blue text-black border-none">ULTRA HD</div>
+                    </div>
                   </div>
-                </div>
+                )}
+                
                 <div className="flex-1 space-y-4 py-1">
                   <div className="flex items-center gap-3">
                     <div className="relative">
@@ -793,31 +874,63 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
               </div>
 
               <div className="mt-8 grid grid-cols-1 gap-3">
-                <div className="group relative">
-                  <div className="absolute -inset-0.5 neo-gradient rounded-[20px] blur opacity-40 group-hover:opacity-100 transition duration-1000"></div>
-                  <NeoButton 
-                    className="w-full bg-[var(--bg-color)] !shadow-none py-4 border-none text-sm tracking-widest font-black"
-                    onClick={() => addDownload(result, 'hd')}
-                  >
-                    DOWNLOAD HD VIDEO
-                  </NeoButton>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <NeoButton 
-                    variant="outline" 
-                    className="py-4 text-[10px] sm:text-xs tracking-widest border-[var(--glass-border)] font-black uppercase text-[var(--text-main)]/80"
-                    onClick={() => addDownload(result, 'nowm')}
-                  >
-                    NO WATERMARK
-                  </NeoButton>
-                  <NeoButton 
-                    variant="ghost" 
-                    className="py-4 text-[10px] sm:text-xs tracking-widest glass font-black uppercase text-[var(--text-main)]/80"
-                    onClick={() => addDownload(result, 'mp3')}
-                  >
-                    DOWNLOAD MP3
-                  </NeoButton>
-                </div>
+                {result.isSlideshow ? (
+                  <>
+                    <div className="group relative">
+                      <div className="absolute -inset-0.5 neo-gradient rounded-[20px] blur opacity-40 group-hover:opacity-100 transition duration-1000"></div>
+                      <NeoButton 
+                        className="w-full bg-[var(--bg-color)] !shadow-none py-4 border-none text-sm tracking-widest font-black"
+                        onClick={() => handleDownloadSlide(result.images![currentSlide])}
+                      >
+                        DOWNLOAD THIS SLIDE
+                      </NeoButton>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <NeoButton 
+                        variant="outline" 
+                        className="py-4 text-[10px] sm:text-xs tracking-widest border-[var(--glass-border)] font-black uppercase text-[var(--text-main)]/80"
+                        onClick={() => addDownload(result, 'hd')}
+                      >
+                        DOWNLOAD AS VIDEO
+                      </NeoButton>
+                      <NeoButton 
+                        variant="ghost" 
+                        className="py-4 text-[10px] sm:text-xs tracking-widest glass font-black uppercase text-[var(--text-main)]/80"
+                        onClick={() => addDownload(result, 'mp3')}
+                      >
+                        DOWNLOAD MP3
+                      </NeoButton>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="group relative">
+                      <div className="absolute -inset-0.5 neo-gradient rounded-[20px] blur opacity-40 group-hover:opacity-100 transition duration-1000"></div>
+                      <NeoButton 
+                        className="w-full bg-[var(--bg-color)] !shadow-none py-4 border-none text-sm tracking-widest font-black"
+                        onClick={() => addDownload(result, 'hd')}
+                      >
+                        DOWNLOAD HD VIDEO
+                      </NeoButton>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <NeoButton 
+                        variant="outline" 
+                        className="py-4 text-[10px] sm:text-xs tracking-widest border-[var(--glass-border)] font-black uppercase text-[var(--text-main)]/80"
+                        onClick={() => addDownload(result, 'nowm')}
+                      >
+                        NO WATERMARK
+                      </NeoButton>
+                      <NeoButton 
+                        variant="ghost" 
+                        className="py-4 text-[10px] sm:text-xs tracking-widest glass font-black uppercase text-[var(--text-main)]/80"
+                        onClick={() => addDownload(result, 'mp3')}
+                      >
+                        DOWNLOAD MP3
+                      </NeoButton>
+                    </div>
+                  </>
+                )}
               </div>
             </GlassCard>
             

@@ -30,6 +30,8 @@ export interface TikTokVideo {
   duration: number;
   timestamp: number;
   fileSize?: string;
+  images?: string[];
+  isSlideshow: boolean;
 }
 
 export interface DownloadTask {

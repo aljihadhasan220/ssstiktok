@@ -66,7 +66,9 @@ export const TikTokApiService = {
         },
         duration: data.duration,
         timestamp: Date.now(),
-        fileSize: "Auto"
+        fileSize: "Auto",
+        images: data.images || [],
+        isSlideshow: !!(data.images && data.images.length > 0)
       };
     } catch (error: any) {
       console.error('API Error:', error);
