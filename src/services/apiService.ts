@@ -4,9 +4,22 @@ import { TikTokVideo } from '../types';
  * SSSTikTok API Service
  * Robust implementation with URL validation and error simulation.
  */
-// Simple in-memory cache
-const apiCache = new Map<string, { data: TikTokVideo, timestamp: number }>();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+// Simple persistent cache using localStorage
+const getCache = () => {
+  try {
+    const saved = localStorage.getItem('ssstikpro_api_cache');
+    return saved ? new Map(JSON.parse(saved)) : new Map<string, { data: TikTokVideo, timestamp: number }>();
+  } catch { return new Map<string, { data: TikTokVideo, timestamp: number }>(); }
+};
+
+const saveCache = (cache: Map<string, any>) => {
+  try {
+    localStorage.setItem('ssstikpro_api_cache', JSON.stringify(Array.from(cache.entries())));
+  } catch (e) { console.warn("Cache save failed:", e); }
+};
+
+const apiCache = getCache();
+const CACHE_TTL = 30 * 60 * 1000; // 30 minutes for persistent cache
 
 export const TikTokApiService = {
   validateUrl: (url: string): boolean => {
@@ -15,8 +28,6 @@ export const TikTokApiService = {
 
   /**
    * Resolves and analyzes a TikTok URL.
-   * In a real production app, this would hit a backend endpoint (e.g., /api/tiktok).
-   * Here we implement the full parsing logic and simulate the network handshake.
    */
   analyzeUrl: async (url: string): Promise<TikTokVideo> => {
     if (!TikTokApiService.validateUrl(url)) {
@@ -30,33 +41,23 @@ export const TikTokApiService = {
     }
 
     try {
-      // Use URLSearchParams for application/x-www-form-urlencoded
       const params = new URLSearchParams();
       params.append('url', url);
 
       const response = await fetch('https://www.tikwm.com/api/', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: params,
       });
 
-      if (!response.ok) {
-        throw new Error('API server unreachable. Please try again later.');
-      }
-
+      if (!response.ok) throw new Error('API server unreachable. Please try again later.');
       const result = await response.json();
-
-      if (result.code !== 0 || !result.data) {
-        throw new Error(result.msg || 'Failed to fetch video data. Check the link.');
-      }
+      if (result.code !== 0 || !result.data) throw new Error(result.msg || 'Failed to fetch video data.');
 
       const data = result.data;
-
       const videoData: TikTokVideo = {
         id: data.id,
-        url: url,
+        url,
         author: {
           username: data.author.nickname || "User",
           avatar: data.author.avatar,
@@ -83,11 +84,12 @@ export const TikTokApiService = {
 
       // Save to cache
       apiCache.set(url, { data: videoData, timestamp: Date.now() });
+      saveCache(apiCache);
 
       return videoData;
     } catch (error: any) {
       console.error('API Error:', error);
-      throw new Error(error.message || 'An error occurred while analyzing the URL.');
+      throw new Error(error.message || 'An error occurred during analysis.');
     }
   }
 };

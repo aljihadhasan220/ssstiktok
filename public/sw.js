@@ -1,42 +1,84 @@
-const CACHE_NAME = 'ssstiktok-cache-v1';
+const CACHE_NAME = 'ssstikpro-cache-v3';
+const MEDIA_CACHE = 'ssstikpro-media-v2';
+const MAX_MEDIA_ENTRIES = 50;
+
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
-  '/manifest.json'
+  '/manifest.json',
+  '/icon.svg',
+  '/favicon.ico'
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE))
   );
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
-          }
+    Promise.all([
+      caches.keys().then((keys) => Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME && key !== MEDIA_CACHE) return caches.delete(key);
         })
-      );
-    })
+      )),
+      self.clients.claim()
+    ])
   );
 });
 
+// Helper to limit cache size
+const limitCacheSize = (cacheName, maxItems) => {
+  caches.open(cacheName).then((cache) => {
+    cache.keys().then((keys) => {
+      if (keys.length > maxItems) {
+        cache.delete(keys[0]).then(() => limitCacheSize(cacheName, maxItems));
+      }
+    });
+  });
+};
+
 self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.match(event.request).then((response) => {
-        const fetchPromise = fetch(event.request).then((networkResponse) => {
-          cache.put(event.request, networkResponse.clone());
-          return networkResponse;
+  const url = new URL(event.request.url);
+  
+  // Cache Media/Proxy Requests (GET only)
+  if (url.pathname.startsWith('/api/proxy') && event.request.method === 'GET') {
+    event.respondWith(
+      caches.match(event.request).then((cached) => {
+        if (cached) return cached;
+        
+        return fetch(event.request).then((response) => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(MEDIA_CACHE).then((cache) => {
+              cache.put(event.request, copy);
+              limitCacheSize(MEDIA_CACHE, MAX_MEDIA_ENTRIES);
+            });
+          }
+          return response;
         });
-        return response || fetchPromise;
-      });
+      })
+    );
+    return;
+  }
+
+  // Common assets
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      const networked = fetch(event.request)
+        .then((response) => {
+          if (response.ok) {
+             const copy = response.clone();
+             caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+          }
+          return response;
+        })
+        .catch(() => cached);
+
+      return cached || networked;
     })
   );
 });
