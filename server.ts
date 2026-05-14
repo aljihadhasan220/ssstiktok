@@ -2,6 +2,7 @@ import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
 import { fileURLToPath } from "url";
+import { Readable } from "stream";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,26 +11,27 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  // Proxy endpoint for forcing image downloads
-  app.get("/api/proxy-image", async (req, res) => {
-    const imageUrl = req.query.url as string;
-    const filename = req.query.filename as string || "ssstikpro-slide.jpg";
+  // Generic proxy handler to stream content from TikTok CDNs
+  const handleProxy = async (req: express.Request, res: express.Response) => {
+    const targetUrl = req.query.url as string;
+    const filename = req.query.filename as string || "download";
 
-    if (!imageUrl) {
+    if (!targetUrl) {
       return res.status(400).send("URL is required");
     }
 
     try {
-      const response = await fetch(imageUrl, {
+      const response = await fetch(targetUrl, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Referer': 'https://www.tiktok.com/'
+          'Referer': 'https://www.tiktok.com/',
+          'Accept': '*/*'
         }
       });
       
-      if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`);
+      if (!response.ok) throw new Error(`Failed to fetch: ${response.statusText}`);
 
-      const contentType = response.headers.get("content-type") || "image/jpeg";
+      const contentType = response.headers.get("content-type") || "application/octet-stream";
       const contentLength = response.headers.get("content-length");
       
       res.setHeader("Content-Type", contentType);
@@ -37,15 +39,27 @@ async function startServer() {
       if (contentLength) {
         res.setHeader("Content-Length", contentLength);
       }
-      
-      const arrayBuffer = await response.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      res.send(buffer);
+
+      if (!response.body) {
+        throw new Error("No response body");
+      }
+
+      // Stream the response directly to the client for maximum speed
+      // Using Readable.fromWeb for Node.js compatibility with fetch ReadableStream
+      // @ts-ignore
+      Readable.fromWeb(response.body).pipe(res);
+
     } catch (error) {
       console.error("Proxy error:", error);
-      res.status(500).send("Error downloading image");
+      if (!res.headersSent) {
+        res.status(500).send("Error downloading content");
+      }
     }
-  });
+  };
+
+  // Proxy endpoints
+  app.get("/api/proxy-image", handleProxy);
+  app.get("/api/proxy-video", handleProxy);
 
   // API placeholders
   app.get("/api/health", (req, res) => {

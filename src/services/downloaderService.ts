@@ -36,50 +36,51 @@ export const TikTokDownloaderService = {
     try {
       onStatusChange('downloading');
       
-      const url = task.type === 'hd' ? task.video.downloadUrls.noWatermarkHd : 
-                  task.type === 'nowm' ? task.video.downloadUrls.noWatermark : 
-                  task.video.downloadUrls.mp3;
+      const remoteUrl = task.type === 'hd' ? task.video.downloadUrls.noWatermarkHd : 
+                        task.type === 'nowm' ? task.video.downloadUrls.noWatermark : 
+                        task.video.downloadUrls.mp3;
 
-      const response = await fetch(url);
-      
-      if (!response.ok) {
-        throw new Error('Could not start download stream.');
-      }
-
-      const contentLength = response.headers.get('content-length');
-      const total = contentLength ? parseInt(contentLength, 10) : 0;
-      
-      const reader = response.body?.getReader();
-      if (!reader) {
-        throw new Error('Failed to open stream.');
-      }
-
-      let received = 0;
-      const chunks = [];
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        chunks.push(value);
-        received += value.length;
-        
-        if (total > 0) {
-          onProgress((received / total) * 100);
-        } else {
-          onProgress(Math.min(99, received / (5 * 1024 * 1024) * 100)); 
-        }
-      }
-
-      const blob = new Blob(chunks, { 
-        type: task.type === 'mp3' ? 'audio/mpeg' : 'video/mp4' 
-      });
+      const filename = task.fileName;
+      const proxyUrl = `/api/proxy-video?url=${encodeURIComponent(remoteUrl)}&filename=${encodeURIComponent(filename)}`;
 
       // --- NATIVE ANDROID/IOS SAVING ---
       if (Capacitor.isNativePlatform()) {
+        const response = await fetch(proxyUrl);
+        
+        if (!response.ok) {
+          throw new Error('Could not start download stream.');
+        }
+
+        const contentLength = response.headers.get('content-length');
+        const total = contentLength ? parseInt(contentLength, 10) : 0;
+        
+        const reader = response.body?.getReader();
+        if (!reader) {
+          throw new Error('Failed to open stream.');
+        }
+
+        let received = 0;
+        const chunks = [];
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          chunks.push(value);
+          received += value.length;
+          
+          if (total > 0) {
+            onProgress((received / total) * 100);
+          } else {
+            onProgress(Math.min(99, (received / (5 * 1024 * 1024)) * 100)); 
+          }
+        }
+
+        const blob = new Blob(chunks, { 
+          type: task.type === 'mp3' ? 'audio/mpeg' : 'video/mp4' 
+        });
+
         try {
           // 1. Permissions
-          // On Android 13+, WRITE_EXTERNAL_STORAGE is deprecated. 
-          // Filesystem plugin handles this mostly, but Media needs its own permissions.
           if (Capacitor.getPlatform() === 'android') {
             await Filesystem.requestPermissions();
           }
@@ -97,7 +98,6 @@ export const TikTokDownloaderService = {
 
           // 4. Save to Public Folders / Gallery
           if (task.type === 'mp3') {
-            // Save Audio to Documents/SSSTikTok/Music
             const audioPath = `SSSTikTok/Music/${task.fileName}`;
             await Filesystem.writeFile({
               path: audioPath,
@@ -106,38 +106,37 @@ export const TikTokDownloaderService = {
               recursive: true
             });
             
-            // Store the final URI in task for opening later
             const finalFile = await Filesystem.getUri({
               directory: Directory.Documents,
               path: audioPath
             });
             task.savedUri = finalFile.uri;
           } else {
-            // Save Video to Gallery using Media plugin
             await Media.saveVideo({
               path: savedFile.uri,
               albumIdentifier: 'SSSTikTok'
             });
-            
-            // On Android, mediaResult might contain a local path
             task.savedUri = savedFile.uri; 
           }
-
-          // Clean up the cache temp file? 
-          // Actually, if we want to "Open File" via FileOpener, sometimes using the Cache path is safer.
-          // But user wants it in Gallery. Media plugin handles that.
-
         } catch (nativeError) {
           console.error("Native save failed:", nativeError);
-          // Only throw if it's a permission issue we can't recover from
-          if (nativeError instanceof Error && nativeError.message.includes("permission")) {
-            throw new Error("Permission not granted. Download failed.");
-          }
           await TikTokDownloaderService._browserFallback(blob, task.fileName);
         }
       } else {
-        // --- BROWSER SAVING ---
-        await TikTokDownloaderService._browserFallback(blob, task.fileName);
+        // --- BROWSER INSTANT DOWNLOAD ---
+        // For browsers, redirecting to the proxy starting and managing the download
+        // is much faster than fetching the whole blob in JS memory.
+        onProgress(50); // Immediate feedback
+        
+        const link = document.createElement('a');
+        link.href = proxyUrl;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        
+        setTimeout(() => {
+          document.body.removeChild(link);
+        }, 100);
       }
       
       onProgress(100);

@@ -593,25 +593,14 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
       
       // Cleanup
       setTimeout(() => {
-        document.body.removeChild(link);
+        if (document.body.contains(link)) {
+          document.body.removeChild(link);
+        }
         window.URL.revokeObjectURL(url);
-      }, 100);
+      }, 200);
     } catch (e) {
       console.error('Download error:', e);
-      addToast("Failed to download image", 'error');
-      
-      // Fallback: Try direct link if proxy fails (might hit CORS but worth a shot as last resort)
-      try {
-        const link = document.createElement('a');
-        link.href = imageUrl;
-        link.target = '_blank';
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } catch (err) {
-        console.error('Fallback failed:', err);
-      }
+      addToast("Failed to download image. Please try again.", 'error');
     }
   }, [currentSlide, addToast]);
 
@@ -809,10 +798,10 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="mx-auto w-[92%] sm:w-full sm:mx-4"
+            className="mx-auto w-[92%] sm:w-full max-w-[350px] sm:max-w-none sm:mx-4"
           >
-            <GlassCard className="!p-4 sm:!p-5 border-white/10 bg-white/[0.03]">
-              <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
+            <GlassCard className="!p-3.5 sm:!p-5 border-white/10 bg-white/[0.03]">
+              <div className="flex flex-col sm:flex-row gap-3.5 sm:gap-5">
                 {result.isSlideshow && result.images ? (
                    <div className="relative w-full sm:w-48 aspect-[1/1] sm:aspect-[9/16] rounded-2xl overflow-hidden bg-black/40 group select-none">
                       <AnimatePresence mode="wait">
@@ -918,7 +907,7 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                 </div>
               </div>
 
-              <div className="mt-6 sm:mt-8 grid grid-cols-1 gap-2.5 sm:gap-3">
+              <div className="mt-5 sm:mt-8 grid grid-cols-1 gap-2 sm:gap-3">
                 {result.isSlideshow ? (
                   <>
                     <div className="group relative">
@@ -926,18 +915,18 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                       <NeoButton 
                         title="Download current slide image"
                         aria-label="Download slide"
-                        className="w-full bg-[var(--bg-color)] !shadow-none py-3.5 sm:py-4 border-none text-xs sm:text-sm tracking-widest font-black"
+                        className="w-full bg-[var(--bg-color)] !shadow-none py-3 sm:py-4 border-none text-[11px] sm:text-sm tracking-widest font-black"
                         onClick={() => handleDownloadSlide(result.images![currentSlide])}
                       >
                         DOWNLOAD THIS SLIDE
                       </NeoButton>
                     </div>
-                    <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
                       <NeoButton 
                         title="Download full slideshow as MP4 video"
                         aria-label="Download as video"
                         variant="outline" 
-                        className="py-3.5 sm:py-4 text-[9px] sm:text-xs tracking-widest border-[var(--glass-border)] font-black uppercase text-[var(--text-main)]/80"
+                        className="py-3 sm:py-4 text-[9px] sm:text-xs tracking-widest border-[var(--glass-border)] font-black uppercase text-[var(--text-main)]/80"
                         onClick={() => addDownload(result, 'hd')}
                       >
                         DOWNLOAD AS VIDEO
@@ -946,7 +935,7 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                         title="Download TikTok video audio as MP3"
                         aria-label="Download MP3"
                         variant="ghost" 
-                        className="py-3.5 sm:py-4 text-[9px] sm:text-xs tracking-widest glass font-black uppercase text-[var(--text-main)]/80"
+                        className="py-3 sm:py-4 text-[9px] sm:text-xs tracking-widest glass font-black uppercase text-[var(--text-main)]/80"
                         onClick={() => addDownload(result, 'mp3')}
                       >
                         DOWNLOAD MP3
@@ -960,18 +949,18 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                       <NeoButton 
                         title="Download TikTok video in high definition"
                         aria-label="Download HD video"
-                        className="w-full bg-[var(--bg-color)] !shadow-none py-3.5 sm:py-4 border-none text-xs sm:text-sm tracking-widest font-black"
+                        className="w-full bg-[var(--bg-color)] !shadow-none py-3 sm:py-4 border-none text-[11px] sm:text-sm tracking-widest font-black"
                         onClick={() => addDownload(result, 'hd')}
                       >
                         DOWNLOAD HD VIDEO
                       </NeoButton>
                     </div>
-                    <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
                       <NeoButton 
                         title="Download TikTok video without watermark"
                         aria-label="Download without watermark"
                         variant="outline" 
-                        className="py-3.5 sm:py-4 text-[9px] sm:text-xs tracking-widest border-[var(--glass-border)] font-black uppercase text-[var(--text-main)]/80"
+                        className="py-3 sm:py-4 text-[9px] sm:text-xs tracking-widest border-[var(--glass-border)] font-black uppercase text-[var(--text-main)]/80"
                         onClick={() => addDownload(result, 'nowm')}
                       >
                         NO WATERMARK
@@ -980,7 +969,7 @@ const HomeScreen = ({ addDownload, addToast, settings, isAnalyzing, setIsAnalyzi
                         title="Download TikTok video audio"
                         aria-label="Download MP3"
                         variant="ghost" 
-                        className="py-3.5 sm:py-4 text-[9px] sm:text-xs tracking-widest glass font-black uppercase text-[var(--text-main)]/80"
+                        className="py-3 sm:py-4 text-[9px] sm:text-xs tracking-widest glass font-black uppercase text-[var(--text-main)]/80"
                         onClick={() => addDownload(result, 'mp3')}
                       >
                         DOWNLOAD MP3
