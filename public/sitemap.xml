@@ -1,56 +1,83 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset 
+<<?xml version="1.0" encoding="UTF-8"?>
+
+<urlset
 xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
 xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
   <url>
     <loc>https://ssstikpro.site/</loc>
     <lastmod>2026-05-12</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://ssstikpro.site/en"/>
-    <xhtml:link rel="alternate" hreflang="in" href="https://ssstikpro.site/in"/>
-    <xhtml:link rel="alternate" hreflang="id" href="https://ssstikpro.site/id"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://ssstikpro.site/vi"/>
-    <xhtml:link rel="alternate" hreflang="ja" href="https://ssstikpro.site/ja"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://ssstikpro.site/zh"/>
-    <xhtml:link rel="alternate" hreflang="th" href="https://ssstikpro.site/th"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://ssstikpro.site/de"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://ssstikpro.site/ar"/>
-    <xhtml:link rel="alternate" hreflang="ms" href="https://ssstikpro.site/ms"/>
-    <xhtml:link rel="alternate" hreflang="pl" href="https://ssstikpro.site/pl"/>
-    <xhtml:link rel="alternate" hreflang="cs" href="https://ssstikpro.site/cs"/>
-    <xhtml:link rel="alternate" hreflang="bn" href="https://ssstikpro.site/bn"/>
+
+    <xhtml:link rel="alternate" hreflang="en" href="https://ssstikpro.site/en/" />
+    <xhtml:link rel="alternate" hreflang="in" href="https://ssstikpro.site/in/" />
+    <xhtml:link rel="alternate" hreflang="id" href="https://ssstikpro.site/id/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://ssstikpro.site/vi/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://ssstikpro.site/ja/" />
+    <xhtml:link rel="alternate" hreflang="zh" href="https://ssstikpro.site/zh/" />
+    <xhtml:link rel="alternate" hreflang="th" href="https://ssstikpro.site/th/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://ssstikpro.site/de/" />
+    <xhtml:link rel="alternate" hreflang="ar" href="https://ssstikpro.site/ar/" />
+    <xhtml:link rel="alternate" hreflang="ms" href="https://ssstikpro.site/ms/" />
+    <xhtml:link rel="alternate" hreflang="pl" href="https://ssstikpro.site/pl/" />
+    <xhtml:link rel="alternate" hreflang="cs" href="https://ssstikpro.site/cs/" />
+    <xhtml:link rel="alternate" hreflang="bn" href="https://ssstikpro.site/bn/" />
   </url>
+
   <url>
     <loc>https://ssstikpro.site/blog</loc>
     <lastmod>2026-05-12</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
-  <url><loc>https://ssstikpro.site/about</loc><priority>0.5</priority></url>
-  <url><loc>https://ssstikpro.site/privacy</loc><priority>0.5</priority></url>
-  <url><loc>https://ssstikpro.site/terms</loc><priority>0.5</priority></url>
-  <url><loc>https://ssstikpro.site/contact</loc><priority>0.5</priority></url>
-  
-  <!-- SEO Landing Pages -->
-  <url><loc>https://ssstikpro.site/download-tiktok</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ssstikpro.site/tiktok-download</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ssstikpro.site/tiktok-downloader</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ssstikpro.site/download-video-tiktok</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ssstikpro.site/ssstiktok</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
 
-  <!-- Localized Homes -->
-  <url><loc>https://ssstikpro.site/en</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ssstikpro.site/in</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ssstikpro.site/id</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ssstikpro.site/vi</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ssstikpro.site/ja</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ssstikpro.site/zh</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ssstikpro.site/th</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ssstikpro.site/de</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ssstikpro.site/ar</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ssstikpro.site/ms</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ssstikpro.site/pl</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ssstikpro.site/cs</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://ssstikpro.site/bn</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url>
+    <loc>https://ssstikpro.site/about</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://ssstikpro.site/privacy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://ssstikpro.site/terms</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://ssstikpro.site/contact</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://ssstikpro.site/download-tiktok-video</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://ssstikpro.site/tiktok-downloader</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://ssstikpro.site/download-video-tiktok</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://ssstikpro.site/ssstiktok</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
 </urlset>
