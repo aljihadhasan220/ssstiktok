@@ -13,7 +13,7 @@ import { TikTokApiService } from './services/apiService.ts';
 import { TikTokDownloaderService } from './services/downloaderService.ts';
 import { BrowserRouter, Routes, Route, useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { SUPPORTED_LANGS, SEO_DATA, LangCode } from './lib/seo.ts';
+import { SUPPORTED_LANGS, SEO_DATA, LANDING_PAGES, LangCode } from './lib/seo.ts';
 import { usePWA } from './hooks/usePWA.ts';
 import { LoadingScreen, Toast, NeoButton } from './components/UI.tsx';
 import { LanguageSelector, Footer } from './components/Layout.tsx';
@@ -51,8 +51,11 @@ const MainApp = () => {
   const { lang } = useParams<{ lang?: string }>();
   const location = useLocation();
   const navigate = useNavigate();
+  const pathPart = location.pathname.split('/').filter(Boolean)[0];
+  const isLandingPage = pathPart && LANDING_PAGES[pathPart];
+  
   const currentLang = (lang && SUPPORTED_LANGS.includes(lang as any) ? lang : 'en') as LangCode;
-  const seo = SEO_DATA[currentLang];
+  const seo = isLandingPage ? LANDING_PAGES[pathPart] : SEO_DATA[currentLang];
 
   const [activeScreen, setActiveScreen] = useState<Screen>('home');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -70,6 +73,7 @@ const MainApp = () => {
     else if (firstSegment === 'terms') setActiveScreen('terms');
     else if (firstSegment === 'contact') setActiveScreen('contact');
     else if (firstSegment === 'settings') setActiveScreen('settings');
+    else if (LANDING_PAGES[firstSegment]) setActiveScreen('home');
     else if (!firstSegment || SUPPORTED_LANGS.includes(firstSegment as any)) setActiveScreen('home');
   }, [location.pathname]);
 
@@ -328,6 +332,11 @@ export default function App() {
           <Route path="/terms" element={<MainApp />} />
           <Route path="/contact" element={<MainApp />} />
           <Route path="/settings" element={<MainApp />} />
+          <Route path="/download-tiktok" element={<MainApp />} />
+          <Route path="/tiktok-download" element={<MainApp />} />
+          <Route path="/tiktok-downloader" element={<MainApp />} />
+          <Route path="/download-video-tiktok" element={<MainApp />} />
+          <Route path="/ssstiktok" element={<MainApp />} />
           <Route path="/:lang" element={<MainApp />} />
         </Routes>
       </BrowserRouter>

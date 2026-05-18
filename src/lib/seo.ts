@@ -582,3 +582,81 @@ export const SEO_DATA: Record<LangCode, SeoMetadata> = {
     }
   }
 };
+
+export const LANDING_PAGES: Record<string, SeoMetadata> = {
+  'download-tiktok': {
+    ...SEO_DATA.en,
+    title: "Download TikTok Videos Without Watermark – SSSTikPro",
+    description: "Looking to download TikTok videos? SSSTikPro offers the fastest way to save TikTok content in HD without watermarks. Free and easy to use.",
+    seoContent: {
+      h2: "Download TikTok Videos Easily",
+      p1: "If you want to download TikTok clips to your phone or computer, SSSTikPro is the perfect tool. We provide a simple interface to grab any video link and convert it to a clean MP4 file in seconds.",
+      h3_1: "How to Download TikTok on Mobile",
+      p2: "Simply copy the video link from the app, paste it here, and hit download. It works on both iPhone and Android devices without needing any extra app installation.",
+      h3_2: "Secure Video Downloading",
+      p3: "Safety is our priority. When you download TikTok content through our site, your data remains private and you never have to worry about malware or tracking.",
+      h3_3: "Unlimited TikTok Saves",
+      p4: "There are no restrictions on how many times you can use our downloader. Save your favorite viral trends, educational videos, or funny clips instantly."
+    }
+  },
+  'tiktok-download': {
+    ...SEO_DATA.en,
+    title: "TikTok Download HD – Save Videos Without Watermark",
+    description: "Start your TikTok download today with SSSTikPro. High-quality MP4 exports, no watermark, and lightning-fast speeds for all your favorite videos.",
+    seoContent: {
+      h2: "The Best Way for TikTok Download",
+      p1: "SSSTikPro simplifies the TikTok download process. Whether it's a 15-second clip or a longer format video, our engine fetches the original source to give you the best quality possible.",
+      h3_1: "High Definition TikTok Download",
+      p2: "Don't settle for grainy rips. Our tool ensures every TikTok download is in HD, preserving the clarity and detail of the original creator's work.",
+      h3_2: "Download Without Branding",
+      p3: "Our advanced algorithms strip away the TikTok logo and UI elements, giving you a clean video ready for viewing or repurposing.",
+      h3_3: "Browser-Based Downloading",
+      p4: "You don't need a high-end PC to perform a TikTok download. Everything happens in your browser, saving your system resources."
+    }
+  },
+  'tiktok-downloader': {
+    ...SEO_DATA.en,
+    title: "TikTok Downloader – Free Online Tool for HD Videos",
+    description: "Our TikTok downloader is the world's most advanced tool for saving videos without watermarks. Fast, secure, and 100% free forever.",
+    seoContent: {
+      h2: "Advanced TikTok Downloader Online",
+      p1: "SSSTikPro is more than just a basic tool; it's a sophisticated TikTok downloader that handles high-traffic demands while maintaining peak performance for every single user.",
+      h3_1: "Smart Link Recognition",
+      p2: "Our TikTok downloader automatically detects individual video links and slideshows, ensuring you get exactly what you're looking for every time.",
+      h3_2: "No Software Required",
+      p3: "Unlike other tools that force you to download suspicious .exe files, our TikTok downloader is entirely web-based and safe to use on any browser.",
+      h3_3: "Fast MP3 & MP4 Export",
+      p4: "Choose between video or audio formats. Our TikTok downloader is versatile enough to handle all your media extraction needs."
+    }
+  },
+  'download-video-tiktok': {
+    ...SEO_DATA.en,
+    title: "Download Video TikTok – HD & No Watermark Saves",
+    description: "Learn how to download video TikTok content in three simple steps. No watermark, high quality, and free access for everyone.",
+    seoContent: {
+      h2: "Professional Way to Download Video TikTok",
+      p1: "SSSTikPro provides the professional standard to download video TikTok enthusiasts expect. High fidelity, fast buffering, and clean outputs are our core features.",
+      h3_1: "Download Video TikTok in Bulk",
+      p2: "Need to save multiple clips? Use our fast processing engine to download video TikTok content one after another without annoying wait times.",
+      h3_2: "Compatible with Latest Formats",
+      p3: "We keep our system updated to handle TikTok's latest encryption and video formats, ensuring you can always download video TikTok creators share.",
+      h3_3: "Global Accessibility",
+      p4: "Our servers are located around the world, making it easy to download video TikTok content from any country at any time."
+    }
+  },
+  'ssstiktok': {
+    ...SEO_DATA.en,
+    title: "SSSTikTok – The Ultimate TikTok Downloader HD",
+    description: "SSSTikTok is the leading name in TikTok video downloading. Save your favorite videos without watermark in HD quality instantly with SSSTikPro.",
+    seoContent: {
+      h2: "Why SSSTikTok Users Prefer SSSTikPro",
+      p1: "SSSTikPro builds on the legacy of SSSTikTok to provide a more stable, faster, and aesthetically pleasing environment for all your downloading needs.",
+      h3_1: "Original SSSTikTok Speed",
+      p2: "We maintain the high-speed standards set by SSSTikTok while adding next-gen design and improved security protocols.",
+      h3_2: "Watermark-Free Experience",
+      p3: "Just like SSSTikTok, our primary goal is to provide clean, high-quality videos that look perfect on any screen.",
+      h3_3: "Multi-Language Support",
+      p4: "SSSTikTok fans from all over the world can enjoy our tool in their native language, from English to Bengali and beyond."
+    }
+  }
+};
