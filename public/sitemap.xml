@@ -1,28 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <urlset
-xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-xmlns:xhtml="http://www.w3.org/1999/xhtml">
+xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
     <loc>https://ssstikpro.site/</loc>
     <lastmod>2026-05-12</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-
-    <xhtml:link rel="alternate" hreflang="en" href="https://ssstikpro.site/en/" />
-    <xhtml:link rel="alternate" hreflang="in" href="https://ssstikpro.site/in/" />
-    <xhtml:link rel="alternate" hreflang="id" href="https://ssstikpro.site/id/" />
-    <xhtml:link rel="alternate" hreflang="vi" href="https://ssstikpro.site/vi/" />
-    <xhtml:link rel="alternate" hreflang="ja" href="https://ssstikpro.site/ja/" />
-    <xhtml:link rel="alternate" hreflang="zh" href="https://ssstikpro.site/zh/" />
-    <xhtml:link rel="alternate" hreflang="th" href="https://ssstikpro.site/th/" />
-    <xhtml:link rel="alternate" hreflang="de" href="https://ssstikpro.site/de/" />
-    <xhtml:link rel="alternate" hreflang="ar" href="https://ssstikpro.site/ar/" />
-    <xhtml:link rel="alternate" hreflang="ms" href="https://ssstikpro.site/ms/" />
-    <xhtml:link rel="alternate" hreflang="pl" href="https://ssstikpro.site/pl/" />
-    <xhtml:link rel="alternate" hreflang="cs" href="https://ssstikpro.site/cs/" />
-    <xhtml:link rel="alternate" hreflang="bn" href="https://ssstikpro.site/bn/" />
   </url>
 
   <url>
